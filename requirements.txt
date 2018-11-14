@@ -1,2 +1,10 @@
 numpy
 matplotlib
+tensorflow
+Cython
+contextlib2
+jupyter
+pillow
+lxml
+pyttsx3
+opencv-python
