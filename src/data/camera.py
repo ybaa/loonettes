@@ -8,7 +8,7 @@ class Camera:
     def __init__(self, camNr):
         self.camNr = camNr
 
-    def __caputre__(self):
+    def caputre(self):
         capture = cv2.VideoCapture(self.camNr)
         while (True):
             # Capture frame-by-frame
