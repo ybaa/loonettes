@@ -1,4 +1,5 @@
 from src.data.camera import Camera
+from src.constants import MONO_CAM_NR
 
-cam = Camera(0)
+cam = Camera(MONO_CAM_NR)
 cam.__caputre__()

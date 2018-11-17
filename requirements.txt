@@ -6,5 +6,4 @@ contextlib2
 jupyter
 pillow
 lxml
-pyttsx3
 opencv-python
