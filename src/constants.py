@@ -5,3 +5,4 @@ STEREO_CAM = {
     "LEFT": 2,
     "RIGHT": 4
 }
+DEPTH_MAPS_PATH = '/home/ybaa/Documents/lunettes/data/processed/depth_maps'

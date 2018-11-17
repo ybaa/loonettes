@@ -64,3 +64,5 @@ class Camera:
 
                 if save:
                     self.save_stereo_captures(path, frame_left, frame_right)
+
+                return frame_left, frame_right
