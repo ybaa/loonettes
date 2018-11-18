@@ -7,3 +7,4 @@ jupyter
 pillow
 lxml
 opencv-python
+pyttsx3

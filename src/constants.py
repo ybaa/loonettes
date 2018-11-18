@@ -6,3 +6,4 @@ STEREO_CAM = {
     "RIGHT": 4
 }
 DEPTH_MAPS_PATH = '/home/ybaa/Documents/lunettes/data/interim/depth_maps'
+IMAGES_TO_LOAD_PATH = '/home/ybaa/Documents/lunettes/data/raw/captures/stereo/*'
