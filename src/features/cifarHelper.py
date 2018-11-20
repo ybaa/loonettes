@@ -35,7 +35,7 @@ class CifarHelper:
         self.test_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.test_batch]), self.labels_amount)
 
     def next_batch(self, batch_size):
-        x = self.training_images[self.i:self.i + batch_size].reshape(50, 32, 32, 3)
+        x = self.training_images[self.i:self.i + batch_size].reshape(batch_size, 32, 32, 3)
         y = self.training_labels[self.i:self.i + batch_size]
         self.i = (self.i + batch_size) % len(self.training_images)
         return x, y
