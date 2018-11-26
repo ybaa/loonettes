@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-class CNNBase():
+class CNNBase:
 
     def init_weights(self, shape, stddev=0.1):
         init_random_dist = tf.truncated_normal(shape, stddev=stddev)
@@ -29,3 +29,7 @@ class CNNBase():
         W = self.init_weights([input_size, size])
         b = self.init_bias([size])
         return tf.matmul(input_layer, W) + b
+
+    def save_graph(self):
+        writer = tf.summary.FileWriter('.')
+        writer.add_graph(tf.get_default_graph())

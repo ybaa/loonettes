@@ -30,9 +30,8 @@ class CNNCifar(CNNBase):
                                            y_true: batch[1],
                                            hold_prob: 0.5})
 
-                # PRINT OUT A MESSAGE EVERY 100 STEPS
-                if i % 50 == 0:
-                    print('Currently on step {}'.format(i))
+                if i % 100 == 0:
+                    print('Currently on step ' + str(i))
                     print('Accuracy is:')
                     # Test the Train Model
                     matches = tf.equal(tf.argmax(y_pred, 1), tf.argmax(y_true, 1))
@@ -43,6 +42,7 @@ class CNNCifar(CNNBase):
                                                    y_true: cifar_helper.test_labels,
                                                    hold_prob: 1.0}))
                     print('\n')
+
 
     def load_and_prepare_set(self):
         loader = CifarLoader()
