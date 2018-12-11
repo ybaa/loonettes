@@ -31,5 +31,14 @@ class CNNBase:
         return tf.matmul(input_layer, W) + b
 
     def save_graph(self):
-        writer = tf.summary.FileWriter('.')
+        writer = tf.summary.FileWriter('../reports')
         writer.add_graph(tf.get_default_graph())
+
+    def save_model(self, session, dir):
+        saver = tf.train.Saver()
+        path = saver.save(session, dir)
+        print('model saved in: ' + str(path))
+
+    def restore_model(self, session, dir):
+        saver = tf.train.Saver()
+        saver.restore(session, dir)

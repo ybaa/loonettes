@@ -114,3 +114,7 @@ venv.bak/
 *.jpeg
 *.png
 /data/*
+
+#graphs
+/src/events.out.*
+

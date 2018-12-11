@@ -8,3 +8,4 @@ STEREO_CAM = {
 DEPTH_MAPS_PATH = '/home/ybaa/Documents/lunettes/data/interim/depth_maps'
 IMAGES_TO_LOAD_PATH = '/home/ybaa/Documents/lunettes/data/raw/captures/stereo/*'
 CIFAR_10_PATH = '/home/ybaa/Documents/lunettes/data/raw/cifar-10-python/cifar-10-batches-py/'
+SAVE_MODEL_PATH = '/home/ybaa/Documents/lunettes/models/'
