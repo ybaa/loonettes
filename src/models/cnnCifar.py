@@ -3,26 +3,27 @@ from src.models.cnnBase import CNNBase
 from src.data.cifarLoader import CifarLoader
 from src.features.cifarHelper import CifarHelper
 from src.constants import SAVE_MODEL_PATH
+import numpy as np
 
 
 class CNNCifar(CNNBase):
 
-    def __init__(self, img_size=[32,32], labels_amount=10, channels=3):
+    def __init__(self, img_size=[32, 32], labels_amount=10, channels=3):
         pass
         self.x_shape = [None, img_size[0], img_size[1], channels]
         self.y_true_shape = [None, labels_amount]
 
-    def run_session(self, restore=False, save=False):
+        self.x = tf.placeholder(tf.float32, shape=self.x_shape)
+        self.y_true = tf.placeholder(tf.float32, shape=self.y_true_shape)
+        self.hold_prob = tf.placeholder(tf.float32)
 
-        x = tf.placeholder(tf.float32, shape=self.x_shape)
-        y_true = tf.placeholder(tf.float32, shape=self.y_true_shape)
-        hold_prob = tf.placeholder(tf.float32)
+        self.y_pred, self.train_step = self.create_layers(self.x, self.y_true, self.hold_prob)
+
+    def run_learning_session(self, restore=False, save=False):
 
         cifar_helper = self.load_and_prepare_set()
 
-        y_pred, train_step = self.create_layers(x, y_true, hold_prob)
-
-        iter_number = 101
+        iter_number = 401   # it should be much bigger but this value is set for developing
 
         with tf.Session() as sess:
 
@@ -33,33 +34,41 @@ class CNNCifar(CNNBase):
 
             for i in range(iter_number):
                 batch = cifar_helper.next_batch(50)
-                sess.run(train_step, feed_dict={x: batch[0],
-                                                y_true: batch[1],
-                                                hold_prob: 0.5})
+                sess.run(self.train_step, feed_dict={self.x: batch[0],
+                                                     self.y_true: batch[1],
+                                                     self.hold_prob: 0.5})
 
                 if i % 100 == 0:
                     print('Currently on step ' + str(i))
                     print('Accuracy is:')
                     # Test model
-                    matches = tf.equal(tf.argmax(y_pred, 1), tf.argmax(y_true, 1))
+                    matches = tf.equal(tf.argmax(self.y_pred, 1), tf.argmax(self.y_true, 1))
 
                     acc = tf.reduce_mean(tf.cast(matches, tf.float32))
 
-                    print(sess.run(acc, feed_dict={x: cifar_helper.test_images,
-                                                   y_true: cifar_helper.test_labels,
-                                                   hold_prob: 1.0}))
+                    print(sess.run(acc, feed_dict={self.x: cifar_helper.test_images,
+                                                   self.y_true: cifar_helper.test_labels,
+                                                   self.hold_prob: 1.0}))
                     print('\n')
 
-                if i == iter_number-1 and save:
-                    self.save_model(sess, SAVE_MODEL_PATH+'cifar10Convo/model.ckpt')
+                if i == iter_number - 1 and save:
+                    self.save_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
 
+    def predict_single_image(self, img):
+        with tf.Session() as sess:
+            self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+            single_prediction = tf.argmax(self.y_pred, 1)
+            img_reshaped = np.reshape(img, (1, 32, 32, 3))
 
+            pred_val = sess.run(single_prediction, feed_dict={self.x: img_reshaped,
+                                                              self.hold_prob: 1.0})
+            return pred_val
 
     def load_and_prepare_set(self):
         loader = CifarLoader()
         training_batches, test_batch, batch_meta = loader.load_data()
 
-        cifar_helper = CifarHelper(training_batches, test_batch)
+        cifar_helper = CifarHelper(training_batches, test_batch, batch_meta)
         cifar_helper.set_up_images()
         return cifar_helper
 
@@ -92,4 +101,3 @@ class CNNCifar(CNNBase):
         optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
         train_step = optimizer.minimize(loss_function)
         return train_step
-

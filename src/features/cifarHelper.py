@@ -3,7 +3,7 @@ import numpy as np
 
 class CifarHelper:
 
-    def __init__(self, train_batches, test_batch, labels_amount=10):
+    def __init__(self, train_batches, test_batch, batches_meta, labels_amount=10, ):
         self.i = 0
 
         self.all_train_batches = train_batches
@@ -16,6 +16,8 @@ class CifarHelper:
         self.test_labels = None
 
         self.labels_amount = labels_amount
+
+        self.batches_meta = batches_meta
 
     def set_up_images(self):
         print("Setting Up Training Images and Labels")
