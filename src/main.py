@@ -8,7 +8,7 @@ from src.data.cifarLoader import CifarLoader
 
 
 # cnn = CNNCifar()
-# # cnn.run_learning_session()
+# cnn.run_learning_session()
 #
 # cifar_helper = cnn.load_and_prepare_set()
 # pred = cnn.predict_single_image(cifar_helper.test_images[0])
@@ -22,5 +22,8 @@ from src.data.cifarLoader import CifarLoader
 # stereo_img.create_depth_map()
 
 cnn_cifar_100 = CNNCifar(labels_amount=100)
+# cnn_cifar_100.run_learning_session(restore=False, save=True)
 cifar_helper = cnn_cifar_100.load_and_prepare_set()
-stop = 1
+pred = cnn_cifar_100.predict_single_image(cifar_helper.test_images[0])
+str_pred = cifar_helper.batches_meta[b'fine_label_names'][pred[0]].decode("utf-8")
+Speaker.say_recognition(str_pred)

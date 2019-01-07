@@ -3,7 +3,7 @@ import numpy as np
 
 class CifarHelper:
 
-    def __init__(self, train_batches, test_batch, batches_meta, labels_amount=10, ):
+    def __init__(self, train_batches, test_batch, batches_meta, labels_amount=10):
         self.i = 0
 
         self.all_train_batches = train_batches
@@ -28,9 +28,9 @@ class CifarHelper:
         self.training_images = self.training_images.reshape(train_len, 3, 32, 32).transpose(0, 2, 3, 1) / 255
 
         if self.labels_amount == 10:
-            self.training_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.all_train_batches]), self.labels_amount)
+            self.training_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.all_train_batches]))
         else:
-            self.training_labels = self.one_hot_encode(np.hstack([d[b"fine_labels"] for d in self.all_train_batches]), self.labels_amount)
+            self.training_labels = self.one_hot_encode(np.hstack([d[b"fine_labels"] for d in self.all_train_batches]))
 
         print("Setting Up Test Images and Labels")
 
@@ -40,9 +40,9 @@ class CifarHelper:
         self.test_images = self.test_images.reshape(test_len, 3, 32, 32).transpose(0, 2, 3, 1) / 255
 
         if self.labels_amount == 10:
-            self.test_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.test_batch]), self.labels_amount)
+            self.test_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.test_batch]))
         else:
-            self.test_labels = self.one_hot_encode(np.hstack([d[b"fine_labels"] for d in self.test_batch]), self.labels_amount)
+            self.test_labels = self.one_hot_encode(np.hstack([d[b"fine_labels"] for d in self.test_batch]))
 
     def next_batch(self, batch_size):
         x = self.training_images[self.i:self.i + batch_size].reshape(batch_size, 32, 32, 3)
@@ -50,8 +50,8 @@ class CifarHelper:
         self.i = (self.i + batch_size) % len(self.training_images)
         return x, y
 
-    def one_hot_encode(self,vec, vals=10):
+    def one_hot_encode(self, vec):
         n = len(vec)
-        out = np.zeros((n, vals))
+        out = np.zeros((n, self.labels_amount))
         out[range(n), vec] = 1
         return out

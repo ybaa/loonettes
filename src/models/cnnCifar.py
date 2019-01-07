@@ -29,7 +29,10 @@ class CNNCifar(CNNBase):
         with tf.Session() as sess:
 
             if restore:
-                self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                if self.is_cifar_10:
+                    self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                else:
+                    self.restore_model(sess, SAVE_MODEL_PATH + 'cifar100Convo/model.ckpt')
             else:
                 sess.run(tf.global_variables_initializer())
 
@@ -53,11 +56,19 @@ class CNNCifar(CNNBase):
                     print('\n')
 
                 if i == iter_number - 1 and save:
-                    self.save_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                    if self.is_cifar_10:
+                        self.save_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                    else:
+                        self.save_model(sess, SAVE_MODEL_PATH + 'cifar100Convo/model.ckpt')
 
     def predict_single_image(self, img):
         with tf.Session() as sess:
-            self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+
+            if self.is_cifar_10:
+                self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+            else:
+                self.restore_model(sess, SAVE_MODEL_PATH + 'cifar100Convo/model.ckpt')
+
             single_prediction = tf.argmax(self.y_pred, 1)
             img_reshaped = np.reshape(img, (1, 32, 32, 3))
 
@@ -91,7 +102,7 @@ class CNNCifar(CNNBase):
 
         full_one_dropout = tf.nn.dropout(full_layer_one, keep_prob=hold_prob)
 
-        y_pred = self.normal_full_layer(full_one_dropout, 10)
+        y_pred = self.normal_full_layer(full_one_dropout, 10 if self.is_cifar_10 else 100)
 
         cross_entropy = self.create_loss_function(y_pred, y_true)
 
