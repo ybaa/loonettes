@@ -10,6 +10,7 @@ class CNNCifar(CNNBase):
 
     def __init__(self, img_size=[32, 32], labels_amount=10, channels=3):
         pass
+        self.is_cifar_10 = True if labels_amount == 10 else False
         self.x_shape = [None, img_size[0], img_size[1], channels]
         self.y_true_shape = [None, labels_amount]
 
@@ -66,9 +67,14 @@ class CNNCifar(CNNBase):
 
     def load_and_prepare_set(self):
         loader = CifarLoader()
-        training_batches, test_batch, batch_meta = loader.load_data()
 
-        cifar_helper = CifarHelper(training_batches, test_batch, batch_meta)
+        if self.is_cifar_10:
+            training_batches, test_batch, batch_meta = loader.load_data_cifar10()
+            cifar_helper = CifarHelper(training_batches, test_batch, batch_meta, labels_amount=10)
+        else:
+            training_batches, test_batch, batch_meta = loader.load_data_cifar100()
+            cifar_helper = CifarHelper(training_batches, test_batch, batch_meta, labels_amount=100)
+
         cifar_helper.set_up_images()
         return cifar_helper
 

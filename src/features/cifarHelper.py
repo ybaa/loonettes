@@ -26,7 +26,11 @@ class CifarHelper:
         train_len = len(self.training_images)
 
         self.training_images = self.training_images.reshape(train_len, 3, 32, 32).transpose(0, 2, 3, 1) / 255
-        self.training_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.all_train_batches]), self.labels_amount)
+
+        if self.labels_amount == 10:
+            self.training_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.all_train_batches]), self.labels_amount)
+        else:
+            self.training_labels = self.one_hot_encode(np.hstack([d[b"fine_labels"] for d in self.all_train_batches]), self.labels_amount)
 
         print("Setting Up Test Images and Labels")
 
@@ -34,7 +38,11 @@ class CifarHelper:
         test_len = len(self.test_images)
 
         self.test_images = self.test_images.reshape(test_len, 3, 32, 32).transpose(0, 2, 3, 1) / 255
-        self.test_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.test_batch]), self.labels_amount)
+
+        if self.labels_amount == 10:
+            self.test_labels = self.one_hot_encode(np.hstack([d[b"labels"] for d in self.test_batch]), self.labels_amount)
+        else:
+            self.test_labels = self.one_hot_encode(np.hstack([d[b"fine_labels"] for d in self.test_batch]), self.labels_amount)
 
     def next_batch(self, batch_size):
         x = self.training_images[self.i:self.i + batch_size].reshape(batch_size, 32, 32, 3)
