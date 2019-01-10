@@ -1,3 +1,4 @@
+
 import cv2
 from matplotlib import pyplot as plt
 from src.constants import DEPTH_MAPS_PATH
@@ -11,10 +12,10 @@ class StereoImagesConverter:
         self.frame_right = frame_right
 
     def create_depth_map(self, save=False, show=True):
-        # stereoBM = cv2.StereoSGBM_create(numDisparities=16, blockSize=11)
-        stereo_bm = cv2.StereoBM_create(numDisparities=16, blockSize=9)
+        # stereo_bm = cv2.StereoSGBM_create(numDisparities=16, blockSize=11)
+        stereo_bm = cv2.StereoBM_create(numDisparities=16, blockSize=11)
         conv_left, conv_right = self.convert_bgr_2_gray()
-        depth_map= stereo_bm.compute(conv_left, conv_right)
+        depth_map = stereo_bm.compute(conv_left,conv_right)
 
         if show:
             self.show_depth_map(depth_map)
@@ -39,3 +40,21 @@ class StereoImagesConverter:
     def show_depth_map(self, depth_map):
         plt.imshow(depth_map, 'gray')
         plt.show()
+
+    # ----------------------------------------------------------------------------------------------------
+    def test_parameters(self):
+        for i in range(16, 128, 16):
+            for j in range(5, 31, 2):
+                stereo_bm = cv2.StereoBM_create(numDisparities=i, blockSize=j)
+                conv_left, conv_right = self.convert_bgr_2_gray()
+                depth_map = stereo_bm.compute(conv_left, conv_right)
+                print('current on numDisp=' + str(i) + ' and blockSize=' + str(j) + '\n')
+
+                self.save_depth_map_with_params_in_name(path=DEPTH_MAPS_PATH, frame=depth_map, i=i, j=j)
+
+    def save_depth_map_with_params_in_name(self, path, frame, i, j):
+        ts = datetime.datetime.now().timestamp()
+        ts = str(ts).replace(".", "")
+        full_path = path + '/paramsTest/dm' + '_' + 'numDis' + str(i) + '_bs' + str(j) + '_' + ts + '.jpg'
+        cv2.imwrite(full_path, frame)
+        return
