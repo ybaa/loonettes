@@ -8,3 +8,4 @@ pillow
 lxml
 opencv-python
 pyttsx3
+pandas

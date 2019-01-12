@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
-
+from src.models.cnnMyDataset import CNNMyDataset
 
 class DivisionDetector:
 
@@ -12,6 +12,7 @@ class DivisionDetector:
         height, width = img.shape[:2]
         new_height = int(height / 2)
         new_width = int(width / 2)
+
         up_left = img[:new_height, :new_width, ]
         up_right = img[:new_height, new_width:width, ]
         bottom_left = img[new_height:height, :new_width, ]
@@ -32,6 +33,10 @@ class DivisionDetector:
         self.divided_image.append(up_right)
         self.divided_image.append(bottom_right)
         self.divided_image.append(bottom_left)
+
+        # cnn_mine = CNNMyDataset()
+        # predicted = cnn_mine.predict_single_image(up_left)
+
         return [up_left, up_right, bottom_left, bottom_right]
 
     def divide_recursively(self, depth, img):

@@ -15,7 +15,7 @@ class Camera:
         Click: 'q' to quit, 's' to save capture
         """
         capture = cv2.VideoCapture(self.mono_or_left_cam_nr)
-        while (True):
+        while True:
             # Capture frame-by-frame
             ret, frame = capture.read()
 
