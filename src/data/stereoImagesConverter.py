@@ -13,7 +13,27 @@ class StereoImagesConverter:
 
     def create_depth_map(self, save=False, show=True):
         # stereo_bm = cv2.StereoSGBM_create(numDisparities=16, blockSize=11)
-        stereo_bm = cv2.StereoBM_create(numDisparities=16, blockSize=11)
+        # stereo_bm = cv2.StereoBM_create(numDisparities=32, blockSize=15)
+        # stereo_bm = cv2.StereoSGBM_create(minDisparity=-64,
+        #                                   numDisparities=192,
+        #                                   blockSize=5,
+        #                                   P1=600,
+        #                                   P2=2400,
+        #                                   disp12MaxDiff=10,
+        #                                   preFilterCap=4,
+        #                                   uniquenessRatio=1,
+        #                                   speckleRange=2,
+        #                                   speckleWindowSize=150)
+        stereo_bm = cv2.StereoSGBM_create(minDisparity=16,
+                                          numDisparities=32,
+                                          blockSize=15,
+                                          P1=600,
+                                          P2=2400,
+                                          disp12MaxDiff=20,
+                                          preFilterCap=16,
+                                          uniquenessRatio=1,
+                                          speckleRange=20,
+                                          speckleWindowSize=100)
         conv_left, conv_right = self.convert_bgr_2_gray()
         depth_map = stereo_bm.compute(conv_left,conv_right)
 

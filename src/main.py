@@ -17,7 +17,7 @@ import cv2
 # Speaker.say_recognition(str_pred)
 
 # cam = Camera(STEREO_CAM['LEFT'], STEREO_CAM['RIGHT'])
-# frame_left, frame_right = cam.capture_stereo(STEREO_CAPTURES_FROM_CAM_PATH, save=False)
+# frame_left, frame_right = cam.capture_stereo(STEREO_CAPTURES_FROM_CAM_PATH, save=True)
 
 # stereo_img = StereoImagesConverter(frame_left, frame_right)
 # stereo_img.create_depth_map()
@@ -32,6 +32,8 @@ import cv2
 
 frame_left = cv2.imread('/home/ybaa/Documents/lunettes/data/raw/captures/stereo/cam2_1547067275510002_L.jpg')
 frame_right = cv2.imread('/home/ybaa/Documents/lunettes/data/raw/captures/stereo/cam2_1547067275510002_R.jpg')
+# frame_left = cv2.imread('/home/ybaa/Downloads/image1.png')
+# frame_right = cv2.imread('/home/ybaa/Downloads/image2.png')
 stereo_img = StereoImagesConverter(frame_right, frame_left)
 stereo_img.create_depth_map()
 # stereo_img.test_parameters()
