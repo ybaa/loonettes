@@ -1,7 +1,8 @@
 import cv2
 from matplotlib import pyplot as plt
-from src.constants import DEPTH_MAPS_PATH
+from src.constants import DISPARITY_MAPS_PATH
 import datetime
+import numpy as np
 
 
 class StereoImagesConverter:
@@ -10,17 +11,17 @@ class StereoImagesConverter:
         self.frame_left = frame_left
         self.frame_right = frame_right
 
-    def create_depth_map(self, save=False, show=True):
+    def create_disparity_map(self, save=False, show=True):
         # stereoBM = cv2.StereoSGBM_create(numDisparities=16, blockSize=11)
         stereo_bm = cv2.StereoBM_create(numDisparities=16, blockSize=9)
         conv_left, conv_right = self.convert_bgr_2_gray()
         depth_map= stereo_bm.compute(conv_left, conv_right)
 
         if show:
-            self.show_depth_map(depth_map)
+            self.show_disparity_map(depth_map)
 
         if save:
-            self.save_depth_map(path=DEPTH_MAPS_PATH, frame=depth_map)
+            self.save_disparity_map(path=DISPARITY_MAPS_PATH, frame=depth_map)
 
         return depth_map
 
@@ -29,13 +30,26 @@ class StereoImagesConverter:
         img_right = cv2.cvtColor(self.frame_right, cv2.COLOR_BGR2GRAY)
         return img_left, img_right
 
-    def save_depth_map(self, path, frame):
+    def save_disparity_map(self, path, frame):
         ts = datetime.datetime.now().timestamp()
         ts = str(ts).replace(".", "")
         full_path = path + '/dm' + '_' + ts + '.jpg'
         cv2.imwrite(full_path, frame)
         return
 
-    def show_depth_map(self, depth_map):
-        plt.imshow(depth_map, 'gray')
+    def show_disparity_map(self, disparity_map):
+        plt.imshow(disparity_map, 'gray')
         plt.show()
+
+    def append_img_with_disparity_map(self, img, disparity_map):
+        channel_0 = img[:, :, 0]
+        channel_1 = img[:, :, 1]
+        channel_2 = img[:, :, 2]
+
+        merged = np.zeros((img.shape[0], img.shape[1], 4)).astype(int)
+        merged[:, :, 0] = channel_0
+        merged[:, :, 1] = channel_1
+        merged[:, :, 2] = channel_2
+        merged[:, :, 3] = disparity_map
+
+        return merged

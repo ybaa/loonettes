@@ -5,7 +5,7 @@ STEREO_CAM = {
     "LEFT": 2,
     "RIGHT": 4
 }
-DEPTH_MAPS_PATH = '/home/ybaa/Documents/lunettes/data/interim/depth_maps'
+DISPARITY_MAPS_PATH = '/home/ybaa/Documents/lunettes/data/interim/disparity_maps'
 IMAGES_TO_LOAD_PATH = '/home/ybaa/Documents/lunettes/data/raw/captures/stereo/*'
 CIFAR_10_PATH = '/home/ybaa/Documents/lunettes/data/raw/cifar-10-python/cifar-10-batches-py/'
 CIFAR_100_PATH = '/home/ybaa/Documents/lunettes/data/raw/cifar-100-python/'
