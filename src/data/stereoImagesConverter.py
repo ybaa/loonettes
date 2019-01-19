@@ -53,3 +53,5 @@ class StereoImagesConverter:
         merged[:, :, 3] = disparity_map
 
         return merged
+
+

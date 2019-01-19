@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from src.models.cnnMyDataset import CNNMyDataset
+from src.features.myDatasetHelper import MyDatasetHelper
 
 class DivisionDetector:
 

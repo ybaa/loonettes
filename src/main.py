@@ -9,6 +9,9 @@ import cv2
 from src.models.divisionDetector import DivisionDetector
 from matplotlib import pyplot as plt
 from src.data.myDatasetLoader import MyDatasetLoader
+from src.features.myDatasetHelper import MyDatasetHelper
+from src.models.cnnMyDataset import CNNMyDataset
+import time
 
 # cnn = CNNCifar()
 # cnn.run_learning_session()
@@ -19,7 +22,11 @@ from src.data.myDatasetLoader import MyDatasetLoader
 # Speaker.say_recognition(str_pred)
 
 # cam = Camera(STEREO_CAM['LEFT'], STEREO_CAM['RIGHT'])
-# frame_left, frame_right = cam.capture_stereo(STEREO_CAPTURES_FROM_CAM_PATH, save=False)
+# for i in range(2):
+#     frame_left, frame_right = cam.capture_stereo(STEREO_CAPTURES_FROM_CAM_PATH, save=True)
+#     print('photo taken')
+#     time.sleep(2)
+
 
 # frame_left = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_L.jpg')
 # frame_right = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_R.jpg')
@@ -41,6 +48,22 @@ from src.data.myDatasetLoader import MyDatasetLoader
 # str_pred = cifar_helper.batches_meta[b'fine_label_names'][pred[0]].decode("utf-8")
 # Speaker.say_recognition(str_pred)
 
-my_dataset_loader = MyDatasetLoader()
+# my_dataset_loader = MyDatasetLoader()
 # my_dataset_loader.pickle_data()
-loaded = my_dataset_loader.load_dataset()
+# loaded = my_dataset_loader.load_dataset()
+
+# dataset_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(loaded[0][0])
+# division_detector = DivisionDetector()
+
+# single_img = loaded[0][0]
+#
+# division_detector.divided_image.append(single_img)
+# division_detector.divide_recursively(2, single_img)
+#
+# single_img_divided_rescaled = MyDatasetHelper.resize_images(division_detector.divided_image)
+#
+#
+
+my_cnn = CNNMyDataset()
+my_cnn.run_learning_session()
+

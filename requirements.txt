@@ -9,3 +9,4 @@ lxml
 opencv-python
 pyttsx3
 pandas
+scikit-learn
