@@ -65,11 +65,11 @@ from src.features.myDatasetHelper import MyDatasetHelper
 # single_img_divided_rescaled = MyDatasetHelper.resize_images(division_detector.divided_image)
 #
 #
-# my_cnn = CNNMyDataset()
-# helper = my_cnn.load_and_prepare_set()
-# # my_cnn.run_learning_session(save=True)
-# pred_val = my_cnn.predict_single_image(helper.test_images[0])
-# pred_val_str = helper.le.inverse_transform([pred_val[0]])
-# print(pred_val_str[0])
+my_cnn = CNNMyDataset()
+helper = my_cnn.load_and_prepare_set()
+# my_cnn.run_learning_session(save=True)
+pred_val = my_cnn.predict_single_image(helper.test_images[0])
+pred_val_str = helper.le.inverse_transform([pred_val[0]])
+print(pred_val_str[0])
 # Speaker.say_recognition(pred_val_str[0])
 
