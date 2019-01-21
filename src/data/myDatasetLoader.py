@@ -2,11 +2,9 @@ import pickle
 import cv2
 import glob
 import csv
-from src.constants import MY_DATASET_DETECTION_PATH, MY_DATASET_CLFS_PATH
 
 
 class MyDatasetLoader:
-
 
     def load_dataset(self):
         dirs_train = ['train', 'labels_p']
@@ -17,17 +15,17 @@ class MyDatasetLoader:
         meta = []
 
         for dir in dirs_train:
-            train_data.append(self.unpickle(MY_DATASET_CLFS_PATH + 'train/' + dir))
+            train_data.append(self.unpickle('../data/raw/myDatasetClfs/train/' + dir))
 
         for dir in dirs_test:
-            test_data.append(self.unpickle(MY_DATASET_CLFS_PATH + 'test/' + dir))
+            test_data.append(self.unpickle('../data/raw/myDatasetClfs/test/' + dir))
 
-        meta.append(self.unpickle(MY_DATASET_CLFS_PATH + 'batch_meta_p'))
+        meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
 
         return train_data, test_data, meta
 
     def pickle_data(self):
-        path = MY_DATASET_CLFS_PATH + 'train/'
+        path = '../data/raw/myDatasetClfs/train/'
         images = [cv2.imread(file) for file in glob.glob(path + "*.jpg")]
         self.pickle(images, 'train', path)
 
@@ -40,7 +38,7 @@ class MyDatasetLoader:
             self.pickle(data[0], 'labels_p', path)
 
         # pickle test
-        path = MY_DATASET_CLFS_PATH + 'test/'
+        path = '../data/raw/myDatasetClfs/test/'
         images = [cv2.imread(file) for file in glob.glob(path + "*.jpg")]
         self.pickle(images, 'test', path)
 
@@ -53,7 +51,7 @@ class MyDatasetLoader:
             self.pickle(data[0], 'labels_p', path)
 
         # pickle meta
-        path = MY_DATASET_CLFS_PATH + 'batch_meta'
+        path = '../data/raw/myDatasetClfs/batch_meta'
         with open(path , newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             data = []

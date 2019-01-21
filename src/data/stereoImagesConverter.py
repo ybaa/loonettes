@@ -1,6 +1,5 @@
 import cv2
 from matplotlib import pyplot as plt
-from src.constants import DISPARITY_MAPS_PATH
 import datetime
 import numpy as np
 
@@ -21,7 +20,8 @@ class StereoImagesConverter:
             self.show_disparity_map(depth_map)
 
         if save:
-            self.save_disparity_map(path=DISPARITY_MAPS_PATH, frame=depth_map)
+            self.save_disparity_map(path='../data/interim/disparity_maps', frame=depth_map)
+            print('disparity map saved')
 
         return depth_map
 

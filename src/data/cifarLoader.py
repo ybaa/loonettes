@@ -1,4 +1,3 @@
-from src.constants import CIFAR_10_PATH, CIFAR_100_PATH
 import pickle
 
 
@@ -11,7 +10,7 @@ class CifarLoader:
         all_data = [0, 1, 2, 3, 4, 5, 6]
 
         for i, direc in zip(all_data, dirs):
-            all_data[i] = self.unpickle(CIFAR_10_PATH + direc)
+            all_data[i] = self.unpickle('../data/raw/cifar-10-python/cifar-10-batches-py/' + direc)
 
         # batch[n], test_batch, batch_meta
         return [all_data[1], all_data[2], all_data[3], all_data[4], all_data[5]], all_data[6], all_data[0]
@@ -22,7 +21,7 @@ class CifarLoader:
         all_data = [0, 1, 2]
 
         for i, direc in zip(all_data, dirs):
-            all_data[i] = self.unpickle(CIFAR_100_PATH + direc)
+            all_data[i] = self.unpickle('../data/raw/cifar-100-python/' + direc)
 
         return [all_data[1]], all_data[2], all_data[0]
 

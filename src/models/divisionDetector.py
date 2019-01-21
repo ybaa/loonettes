@@ -3,6 +3,7 @@ import numpy as np
 from src.models.cnnMyDataset import CNNMyDataset
 from src.features.myDatasetHelper import MyDatasetHelper
 
+
 class DivisionDetector:
 
     def __init__(self):

@@ -1,2 +1,0 @@
-model_checkpoint_path: "/home/ybaa/Documents/lunettes/models/cifar10Convo/model.ckpt"
-all_model_checkpoint_paths: "/home/ybaa/Documents/lunettes/models/cifar10Convo/model.ckpt"

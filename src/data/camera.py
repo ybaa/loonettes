@@ -1,6 +1,6 @@
 import cv2
 import datetime
-from src.constants import MONO_CAPTURE_FROM_CAM_PATH, STEREO_CAPTURES_FROM_CAM_PATH, STEREO_CAM
+from src.constants import STEREO_CAM
 
 
 class Camera:
@@ -23,7 +23,8 @@ class Camera:
             cv2.imshow('frame', frame)
 
             if cv2.waitKey(25) & 0xFF == ord('s'):
-                self.save_single_capture(MONO_CAPTURE_FROM_CAM_PATH, frame)
+                self.save_single_capture('../data/raw/captures/mono', frame)
+                print('photo taken')
             elif cv2.waitKey(25) & 0xFF == ord('q'):
                 break
 
@@ -47,7 +48,7 @@ class Camera:
         cv2.imwrite(full_path_right, frame_right)
         return
 
-    def capture_stereo(self, path=STEREO_CAPTURES_FROM_CAM_PATH, save=False):
+    def capture_stereo(self, path='../data/raw/captures/stereo', save=False):
         """Captures photos from stereo camera and saves it to given location."""
         capture_left = cv2.VideoCapture(2)
         grabbed_left = capture_left.grab()
@@ -64,5 +65,6 @@ class Camera:
 
                 if save:
                     self.save_stereo_captures(path, frame_left, frame_right)
+                    print('photo taken')
 
                 return frame_left, frame_right

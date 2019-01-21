@@ -1,5 +1,5 @@
 from src.data.camera import Camera
-from src.constants import STEREO_CAM, STEREO_CAPTURES_FROM_CAM_PATH
+from src.constants import STEREO_CAM
 from src.data.stereoImagesConverter import StereoImagesConverter
 from src.models.cnnCifar import CNNCifar
 from src.features.cifarHelper import CifarHelper
@@ -12,6 +12,7 @@ from src.data.myDatasetLoader import MyDatasetLoader
 from src.features.myDatasetHelper import MyDatasetHelper
 from src.models.cnnMyDataset import CNNMyDataset
 import time
+from src.features.myDatasetHelper import MyDatasetHelper
 
 # cnn = CNNCifar()
 # cnn.run_learning_session()
@@ -21,7 +22,8 @@ import time
 # str_pred = cifar_helper.batches_meta[b'label_names'][pred[0]].decode("utf-8")
 # Speaker.say_recognition(str_pred)
 
-# cam = Camera(STEREO_CAM['LEFT'], STEREO_CAM['RIGHT'])
+# cam = Camera()
+# cam.capture_stereo(save=True)
 # for i in range(2):
 #     frame_left, frame_right = cam.capture_stereo(STEREO_CAPTURES_FROM_CAM_PATH, save=True)
 #     print('photo taken')
@@ -32,7 +34,7 @@ import time
 # frame_right = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_R.jpg')
 #
 # stereo_img = StereoImagesConverter(frame_left, frame_right)
-# disparity_map = stereo_img.create_disparity_map()
+# disparity_map = stereo_img.create_disparity_map(save=True)
 #
 # frame_left_appended = stereo_img.append_img_with_disparity_map(frame_left, disparity_map)
 # frame_right_appended = stereo_img.append_img_with_disparity_map(frame_right, disparity_map)
@@ -63,7 +65,11 @@ import time
 # single_img_divided_rescaled = MyDatasetHelper.resize_images(division_detector.divided_image)
 #
 #
-
-my_cnn = CNNMyDataset()
-my_cnn.run_learning_session()
+# my_cnn = CNNMyDataset()
+# helper = my_cnn.load_and_prepare_set()
+# # my_cnn.run_learning_session(save=True)
+# pred_val = my_cnn.predict_single_image(helper.test_images[0])
+# pred_val_str = helper.le.inverse_transform([pred_val[0]])
+# print(pred_val_str[0])
+# Speaker.say_recognition(pred_val_str[0])
 

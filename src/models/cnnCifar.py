@@ -2,7 +2,6 @@ import tensorflow as tf
 from src.models.cnnBase import CNNBase
 from src.data.cifarLoader import CifarLoader
 from src.features.cifarHelper import CifarHelper
-from src.constants import SAVE_MODEL_PATH
 import numpy as np
 
 
@@ -30,9 +29,9 @@ class CNNCifar(CNNBase):
 
             if restore:
                 if self.is_cifar_10:
-                    self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                    self.restore_model(sess, '../models/cifar10Convo/model.ckpt')
                 else:
-                    self.restore_model(sess, SAVE_MODEL_PATH + 'cifar100Convo/model.ckpt')
+                    self.restore_model(sess, '../models/cifar100Convo/model.ckpt')
             else:
                 sess.run(tf.global_variables_initializer())
 
@@ -57,17 +56,17 @@ class CNNCifar(CNNBase):
 
                 if i == iter_number - 1 and save:
                     if self.is_cifar_10:
-                        self.save_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                        self.save_model(sess, '../models/cifar10Convo/model.ckpt')
                     else:
-                        self.save_model(sess, SAVE_MODEL_PATH + 'cifar100Convo/model.ckpt')
+                        self.save_model(sess, '../models/cifar100Convo/model.ckpt')
 
     def predict_single_image(self, img):
         with tf.Session() as sess:
 
             if self.is_cifar_10:
-                self.restore_model(sess, SAVE_MODEL_PATH + 'cifar10Convo/model.ckpt')
+                self.restore_model(sess, '../models/cifar10Convo/model.ckpt')
             else:
-                self.restore_model(sess, SAVE_MODEL_PATH + 'cifar100Convo/model.ckpt')
+                self.restore_model(sess, '../models/cifar100Convo/model.ckpt')
 
             single_prediction = tf.argmax(self.y_pred, 1)
             img_reshaped = np.reshape(img, (1, 32, 32, 3))

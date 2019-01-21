@@ -118,3 +118,6 @@ venv.bak/
 #graphs
 /src/events.out.*
 
+# to heavy models
+/models/*
+

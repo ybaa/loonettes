@@ -3,8 +3,8 @@ import tensorflow as tf
 # from src.models.divisionDetector import DivisionDetector
 from src.data.myDatasetLoader import MyDatasetLoader
 from src.features.myDatasetHelper import MyDatasetHelper
-from src.constants import SAVE_MODEL_PATH
 from tensorflow.python import debug as tf_debug
+import numpy as np
 
 
 class CNNMyDataset(CNNBase):
@@ -29,7 +29,7 @@ class CNNMyDataset(CNNBase):
         with tf.Session() as sess:
 
             if restore:
-                self.restore_model(sess, SAVE_MODEL_PATH + 'myConvo/model.ckpt')
+                self.restore_model(sess, '../models/myConvo/model.ckpt')
             else:
                 sess.run(tf.global_variables_initializer())
 
@@ -55,9 +55,7 @@ class CNNMyDataset(CNNBase):
                     print('\n')
 
                 if i == iter_number - 1 and save:
-                    self.save_model(sess, SAVE_MODEL_PATH + 'myConvo/model.ckpt')
-
-
+                    self.save_model(sess, '../models/myConvo/model.ckpt')
 
 
     def load_and_prepare_set(self):
@@ -102,4 +100,13 @@ class CNNMyDataset(CNNBase):
         return train_step
 
     def predict_single_image(self, img):
-        print('hi! i am supposed to do prediction but i only print img shape: ' + str(img.shape))
+        with tf.Session() as sess:
+
+            self.restore_model(sess, '../models/myConvo/model.ckpt')
+
+            single_prediction = tf.argmax(self.y_pred, 1)
+            img_reshaped = np.reshape(img, (1, 120, 160, 3))
+
+            pred_val = sess.run(single_prediction, feed_dict={self.x: img_reshaped,
+                                                              self.hold_prob: 1.0})
+            return pred_val

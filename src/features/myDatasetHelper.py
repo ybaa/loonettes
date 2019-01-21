@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from sklearn import preprocessing
 
+
 class MyDatasetHelper:
     def __init__(self, train_batch, test_batch, batches_meta, labels_amount=2):
         self.i = 0
@@ -21,6 +22,8 @@ class MyDatasetHelper:
         self.training_batches_encoded = None
         self.test_batches_encoded = None
 
+        self.le = preprocessing.LabelEncoder()
+
     def set_up_images(self):
         print("Setting Up Training Images and Labels")
         self.training_images = self.resize_images(self.training_images)
@@ -29,9 +32,8 @@ class MyDatasetHelper:
         self.training_images = np.asanyarray(self.training_images) / 255
 
         # encode labels
-        le_train = preprocessing.LabelEncoder()
-        le_train.fit(self.batches_meta[0])
-        self.training_batches_encoded = le_train.transform(self.training_labels)
+        self.le.fit(self.batches_meta[0])
+        self.training_batches_encoded = self.le.transform(self.training_labels)
 
         self.training_labels = self.one_hot_encode(np.asanyarray(self.training_batches_encoded))
 
@@ -42,9 +44,8 @@ class MyDatasetHelper:
         self.test_images = np.asanyarray(self.test_images) / 255
 
         # encode labels
-        le_test = preprocessing.LabelEncoder()
-        le_test.fit(self.batches_meta[0])
-        self.test_batches_encoded = le_test.transform(self.test_labels)
+        self.le.fit(self.batches_meta[0])
+        self.test_batches_encoded = self.le.transform(self.test_labels)
 
         self.test_labels = self.one_hot_encode(np.asanyarray(self.test_batches_encoded))
 
