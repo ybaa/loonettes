@@ -119,5 +119,7 @@ venv.bak/
 /src/events.out.*
 
 # to heavy models
-/models/*
+/models/cifar10Convo*
+/models/cifar100Convo*
+/models/myConvo*
 
