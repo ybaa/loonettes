@@ -24,7 +24,7 @@ class MyDatasetHelper:
 
         self.le = preprocessing.LabelEncoder()
 
-    def set_up_images(self):
+    def set_up_images(self, reshape_test_images=True):
         print("Setting Up Training Images and Labels")
         self.training_images = self.resize_images(self.training_images)
 
@@ -38,7 +38,8 @@ class MyDatasetHelper:
         self.training_labels = self.one_hot_encode(np.asanyarray(self.training_batches_encoded))
 
         print("Setting Up Test Images and Labels")
-        self.test_images = self.resize_images(self.test_images)
+        if reshape_test_images:
+            self.test_images = self.resize_images(self.test_images)
 
         # to numpy array and normalize
         self.test_images = np.asanyarray(self.test_images) / 255

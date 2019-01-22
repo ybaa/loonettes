@@ -58,13 +58,13 @@ class CNNMyDataset(CNNBase):
                     self.save_model(sess, '../models/myConvo/model.ckpt')
 
 
-    def load_and_prepare_set(self):
+    def load_and_prepare_set(self, reshape_test_images=True):
 
         my_dataset_loader = MyDatasetLoader()
         # my_dataset_loader.pickle_data()
         training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset()
         my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=2)
-        my_dataset_helper.set_up_images()
+        my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images)
 
         return my_dataset_helper
 
