@@ -24,7 +24,7 @@ class CNNMyDataset(CNNBase):
 
         my_dataset_helper = self.load_and_prepare_set()
 
-        iter_number = 201  # it should be much bigger but this value is set for developing
+        iter_number = 501  # it should be much bigger but this value is set for developing
 
         with tf.Session() as sess:
 
@@ -36,7 +36,7 @@ class CNNMyDataset(CNNBase):
             # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
             for i in range(iter_number):
-                batch = my_dataset_helper.next_batch(1)
+                batch = my_dataset_helper.next_batch(4)
                 sess.run(self.train_step, feed_dict={self.x: batch[0],
                                                      self.y_true: batch[1],
                                                      self.hold_prob: 0.5})
@@ -45,6 +45,7 @@ class CNNMyDataset(CNNBase):
                     print('Currently on step ' + str(i))
                     print('Accuracy is:')
                     # Test model
+
                     matches = tf.equal(tf.argmax(self.y_pred, 1), tf.argmax(self.y_true, 1))
 
                     acc = tf.reduce_mean(tf.cast(matches, tf.float32))
@@ -58,11 +59,17 @@ class CNNMyDataset(CNNBase):
                     self.save_model(sess, '../models/myConvo/model.ckpt')
 
 
-    def load_and_prepare_set(self, reshape_test_images=True):
+    def load_and_prepare_set(self, reshape_test_images=True, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
         # my_dataset_loader.pickle_data()
-        training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset()
+
+        if for_classification:
+            training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()
+        else:
+            test_batch, batch_meta = my_dataset_loader.load_dataset_for_detection()
+            training_batch = []
+
         my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=2)
         my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images)
 
@@ -101,12 +108,28 @@ class CNNMyDataset(CNNBase):
 
     def predict_single_image(self, img):
         with tf.Session() as sess:
+            # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
             self.restore_model(sess, '../models/myConvo/model.ckpt')
 
-            single_prediction = tf.argmax(self.y_pred, 1)
             img_reshaped = np.reshape(img, (1, 120, 160, 3))
 
-            pred_val = sess.run(single_prediction, feed_dict={self.x: img_reshaped,
-                                                              self.hold_prob: 1.0})
-            return pred_val
+            #output from nn
+            pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
+                                                            self.hold_prob: 1.0})
+
+            #most probable one
+            pred_max_index = tf.argmax(self.y_pred, 1)
+
+            # index / class
+            index = sess.run(pred_max_index, feed_dict={self.x: img_reshaped,
+                                                        self.hold_prob: 1.0})
+
+            pred_val_nn_output_value = pred_one_hot[0][index[0]]
+
+            # now im testing for 2 claasses so it's sensless to always return prediction
+            # todo: find reliable value by setting the border
+            if pred_val_nn_output_value < 3:
+                return None
+
+            return index

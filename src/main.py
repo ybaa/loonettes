@@ -70,9 +70,9 @@ exp1.test_for_3_channels()
 #
 # my_cnn = CNNMyDataset()
 # helper = my_cnn.load_and_prepare_set()
-# # my_cnn.run_learning_session(save=True)
+# my_cnn.run_learning_session(save=False)
 # pred_val = my_cnn.predict_single_image(helper.test_images[0])
 # pred_val_str = helper.le.inverse_transform([pred_val[0]])
 # print(pred_val_str[0])
-# # Speaker.say_recognition(pred_val_str[0])
+# Speaker.say_recognition(pred_val_str[0])
 

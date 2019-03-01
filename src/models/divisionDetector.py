@@ -1,7 +1,5 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from src.models.cnnMyDataset import CNNMyDataset
-from src.features.myDatasetHelper import MyDatasetHelper
 
 
 class DivisionDetector:
@@ -35,9 +33,6 @@ class DivisionDetector:
         self.divided_image.append(up_right)
         self.divided_image.append(bottom_right)
         self.divided_image.append(bottom_left)
-
-        # cnn_mine = CNNMyDataset()
-        # predicted = cnn_mine.predict_single_image(up_left)
 
         return [up_left, up_right, bottom_left, bottom_right]
 
