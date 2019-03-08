@@ -22,7 +22,8 @@
 ├── src                <- Source code for use in this project.
 │   │
 │   ├── data           <- Scripts to download or generate data
-│   │
+│   │   
+│   ├── experiments    <- Scripts with code for testing model 
 │   │
 │   ├── features       <- Scripts to turn raw data into features for modeling
 │   │

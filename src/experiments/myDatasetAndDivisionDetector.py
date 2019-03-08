@@ -9,11 +9,13 @@ class MyDatasetAndDivisionDetectorManager:
 
     def test_for_3_channels(self):
         correct_answers = 0
+        tested_images = 1
         my_cnn = CNNMyDataset()
         my_dataset_helper = my_cnn.load_and_prepare_set(reshape_test_images=False, for_classification=False)
         division_detector = DivisionDetector()
 
         for test_image, test_label in zip(my_dataset_helper.test_images, my_dataset_helper.test_batches_encoded):
+            division_detector.divided_image = []
             division_detector.divided_image.append(test_image)
             division_detector.divide_recursively(2, test_image)
             single_img_divided_rescaled = my_dataset_helper.resize_images(division_detector.divided_image)
@@ -28,4 +30,7 @@ class MyDatasetAndDivisionDetectorManager:
             if test_label in single_img_predictions:
                 correct_answers += 1
 
-        print('acc: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))
+            print('current acc: ' + str(correct_answers / tested_images) + ' on step ' + str(tested_images))
+            tested_images += 1
+
+        print('final acc: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))

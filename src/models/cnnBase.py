@@ -42,4 +42,4 @@ class CNNBase:
     def restore_model(self, session, dir):
         saver = tf.train.Saver()
         saver.restore(session, dir)
-        print('model restored')
+        # print('model restored')
