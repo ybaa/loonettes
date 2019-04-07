@@ -1,6 +1,8 @@
 import cv2
 import datetime
 from src.constants import STEREO_CAM
+import numpy as np
+import glob
 
 
 class Camera:
@@ -63,8 +65,89 @@ class Camera:
                 ret_right, frame_right = capture_right.retrieve()
                 capture_right.release()
 
+                left_rectified = self.rectify_img(frame_left)
+                right_rectified = self.rectify_img(frame_right)
+
                 if save:
-                    self.save_stereo_captures(path, frame_left, frame_right)
+                    self.save_stereo_captures(path, left_rectified, right_rectified)
                     print('photo taken')
 
-                return frame_left, frame_right
+                return left_rectified, right_rectified
+
+    @staticmethod
+    def calibrate():
+        # termination criteria
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
+        # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
+        objp = np.zeros((6 * 9, 3), np.float32)
+        objp[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2)
+
+        # Arrays to store object points and image points from all the images.
+        objpoints = []  # 3d point in real world space
+        imgpoints = []  # 2d points in image plane.
+
+        images = glob.glob('../data/raw/cameraCalibration/*.jpg')
+
+        for index, fname in enumerate(images):
+            img = cv2.imread(fname)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            # Find the chess board corners
+            ret, corners = cv2.findChessboardCorners(gray, (9, 6), None)
+
+            # If found, add object points, image points (after refining them)
+            if ret == True:
+                objpoints.append(objp)
+
+                cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+                imgpoints.append(corners)
+
+                # Draw and display the corners
+                # cv2.drawChessboardCorners(img, (9, 6), corners, ret)
+                # cv2.imshow('img', img)
+                # cv2.waitKey()
+
+                ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints,
+                                                                   imgpoints,
+                                                                   gray.shape[::-1],
+                                                                   None,
+                                                                   None)
+
+                print(index)
+                print(mtx)
+
+                h, w = img.shape[:2]
+                newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
+
+                if index == len(images)-1:
+                    # undistort
+                    # dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
+                    # crop the image
+                    # x, y, w, h = roi
+                    # rectified = dst[y:y + h, x:x + w]
+                    # cv2.imshow('img', rectified)
+                    # cv2.waitKey()
+                    np.savetxt("../cam_mtx", mtx, delimiter=',')
+                    np.savetxt("../cam_dist", dist, delimiter=',')
+                    np.savetxt("../cam_roi", roi, delimiter=',')
+                    np.savetxt("../cam_newcameramtx", newcameramtx, delimiter=',')
+
+        cv2.destroyAllWindows()
+
+    @staticmethod
+    def rectify_img(img):
+        mtx = np.loadtxt(fname='../cam_mtx', delimiter=',')
+        dist = np.loadtxt(fname='../cam_dist', delimiter=',')
+        newcameramtx = np.loadtxt(fname='../cam_newcameramtx', delimiter=',')
+        roi = np.loadtxt(fname='../cam_roi', delimiter=',', dtype='int32')
+
+        dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
+
+        # crop the image
+        x, y, w, h = roi
+        rectified = dst[y:y + h, x:x + w]
+        # cv2.imshow('img', rectified)
+        # cv2.waitKey()
+
+        return rectified

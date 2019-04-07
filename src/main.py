@@ -1,3 +1,5 @@
+# import os
+# os.environ['TF_CPP_MIN_LOG_LEVEL']='2'  # turn off warnings
 from src.data.camera import Camera
 from src.constants import STEREO_CAM
 from src.data.stereoImagesConverter import StereoImagesConverter
@@ -15,8 +17,9 @@ import time
 from src.features.myDatasetHelper import MyDatasetHelper
 from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDetectorManager
 
-exp1 = MyDatasetAndDivisionDetectorManager()
-exp1.test_for_3_channels()
+
+# exp1 = MyDatasetAndDivisionDetectorManager()
+# exp1.test_for_3_channels()
 
 # cnn = CNNCifar()
 # cnn.run_learning_session()
@@ -26,19 +29,31 @@ exp1.test_for_3_channels()
 # str_pred = cifar_helper.batches_meta[b'label_names'][pred[0]].decode("utf-8")
 # Speaker.say_recognition(str_pred)
 
-# cam = Camera()
+cam = Camera()
+# cam.calibrate()
+# img = cv2.imread('../data/raw/cameraCalibration/cam2_1554635180406394_R.jpg')
+# cam.rectify_img(img)
 # cam.capture_stereo(save=True)
-# for i in range(10):
-#     frame_left, frame_right = cam.capture_stereo(save=True)
-#     time.sleep(1)
+for i in range(3):
+    frame_left, frame_right = cam.capture_stereo(save=True)
+    Speaker.say_recognition('done')
+    time.sleep(1)
 
 
 # frame_left = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_L.jpg')
 # frame_right = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_R.jpg')
+
+
+# stereo_img = StereoImagesConverter(frame_left, frame_right)
+# disparity_map = stereo_img.create_disparity_map(save=False)
+
+# frame_left = cv2.imread('../data/raw/captures/stereo/cam2_1542535287840006_L.jpg')
+# frame_right = cv2.imread('../data/raw/captures/stereo/cam2_1542535287840006_R.jpg')
 #
 # stereo_img = StereoImagesConverter(frame_left, frame_right)
-# disparity_map = stereo_img.create_disparity_map(save=True)
-#
+# stereo_img.rectify_image(frame_left)
+# disparity_map = stereo_img.create_disparity_map(save=False)
+
 # frame_left_appended = stereo_img.append_img_with_disparity_map(frame_left, disparity_map)
 # frame_right_appended = stereo_img.append_img_with_disparity_map(frame_right, disparity_map)
 #

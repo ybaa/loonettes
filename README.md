@@ -42,5 +42,6 @@
 ```
 
 ### Installing development requirements
-
-    pip install -r requirements.txt
+   
+    conda install requirements-conda.txt
+    pip install -r requirements-pip.txt

@@ -14,7 +14,7 @@ class StereoImagesConverter:
         # stereoBM = cv2.StereoSGBM_create(numDisparities=16, blockSize=11)
         stereo_bm = cv2.StereoBM_create(numDisparities=16, blockSize=9)
         conv_left, conv_right = self.convert_bgr_2_gray()
-        depth_map= stereo_bm.compute(conv_left, conv_right)
+        depth_map = stereo_bm.compute(conv_left, conv_right)
 
         if show:
             self.show_disparity_map(depth_map)
@@ -54,4 +54,7 @@ class StereoImagesConverter:
 
         return merged
 
+    def rectify_image(self, img):
+        cv2.imshow('image', img)
+        cv2.waitKey(0)
 

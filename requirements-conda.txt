@@ -1,12 +1,10 @@
 numpy
 matplotlib
-tensorflow
+tensorflow-gpu
 Cython
 contextlib2
 jupyter
 pillow
 lxml
-opencv-python
-pyttsx3
 pandas
 scikit-learn
