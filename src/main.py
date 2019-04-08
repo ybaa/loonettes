@@ -31,13 +31,18 @@ from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDet
 
 cam = Camera()
 # cam.calibrate()
-# img = cv2.imread('../data/raw/cameraCalibration/cam2_1554635180406394_R.jpg')
-# cam.rectify_img(img)
-# cam.capture_stereo(save=True)
-for i in range(3):
-    frame_left, frame_right = cam.capture_stereo(save=True)
-    Speaker.say_recognition('done')
-    time.sleep(1)
+# img = cv2.imread('../data/raw/cameraCalibration/cam2_1554708578437131_L.jpg')
+img = cv2.imread('../data/raw/captures/stereo/cam2_154807559582542_R.jpg')
+cam.rectify_img(img)
+
+# frame_left, frame_right = cam.capture_stereo(save=False, rectify=False)
+# cv2.imshow('aaa',frame_left)
+# cv2.waitKey()
+
+# for i in range(20):
+#     frame_left, frame_right = cam.capture_stereo(save=True, rectify=False)
+#     Speaker.say_recognition(i)
+#     time.sleep(1)
 
 
 # frame_left = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_L.jpg')

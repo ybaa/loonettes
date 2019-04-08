@@ -50,7 +50,7 @@ class Camera:
         cv2.imwrite(full_path_right, frame_right)
         return
 
-    def capture_stereo(self, path='../data/raw/captures/stereo', save=False):
+    def capture_stereo(self, path='../data/raw/captures/stereo', save=False, rectify=True):
         """Captures photos from stereo camera and saves it to given location."""
         capture_left = cv2.VideoCapture(2)
         grabbed_left = capture_left.grab()
@@ -65,14 +65,14 @@ class Camera:
                 ret_right, frame_right = capture_right.retrieve()
                 capture_right.release()
 
-                left_rectified = self.rectify_img(frame_left)
-                right_rectified = self.rectify_img(frame_right)
+                ret_left = self.rectify_img(frame_left) if rectify else frame_left
+                ret_right = self.rectify_img(frame_right) if rectify else frame_right
 
                 if save:
-                    self.save_stereo_captures(path, left_rectified, right_rectified)
+                    self.save_stereo_captures(path, ret_left, ret_right)
                     print('photo taken')
 
-                return left_rectified, right_rectified
+                return ret_left, ret_right
 
     @staticmethod
     def calibrate():
