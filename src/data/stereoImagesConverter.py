@@ -29,7 +29,7 @@ class StereoImagesConverter:
 
         left_matcher = cv2.StereoSGBM_create(
             minDisparity=0,
-            numDisparities=16,  # max_disp has to be dividable by 16 f. E. HH 192, 256
+            numDisparities=16,  # max_disp has to be dividable by 16
             blockSize=5,
             P1=8 * 3 * window_size ** 2,
             P2=32 * 3 * window_size ** 2,
@@ -42,6 +42,7 @@ class StereoImagesConverter:
         )
 
         right_matcher = cv2.ximgproc.createRightMatcher(left_matcher)
+
         # FILTER Parameters
         lmbda = 80000
         sigma = 1.2
@@ -51,8 +52,8 @@ class StereoImagesConverter:
         wls_filter.setSigmaColor(sigma)
 
         #wls filter
-        disp_l = left_matcher.compute(self.frame_left, self.frame_right)  # .astype(np.float32)/16
-        disp_r = right_matcher.compute(self.frame_right, self.frame_left)  # .astype(np.float32)/16
+        disp_l = left_matcher.compute(self.frame_left, self.frame_right)
+        disp_r = right_matcher.compute(self.frame_right, self.frame_left)
         disp_l = np.int16(disp_l)
         disp_r = np.int16(disp_r)
         filtered_img = wls_filter.filter(disp_l, self.frame_left, None, disp_r)  # important to put "imgL" here!!!
