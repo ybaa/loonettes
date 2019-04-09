@@ -30,10 +30,11 @@ from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDet
 # Speaker.say_recognition(str_pred)
 
 cam = Camera()
+# cam.capture_constant_stereo_simultaneously()
 # cam.calibrate()
 # img = cv2.imread('../data/raw/cameraCalibration/cam2_1554708578437131_L.jpg')
-img = cv2.imread('../data/raw/captures/stereo/cam2_154807559582542_R.jpg')
-cam.rectify_img(img)
+# img = cv2.imread('../data/raw/captures/stereo/cam2_154807559582542_R.jpg')
+# cam.rectify_img(img)
 
 # frame_left, frame_right = cam.capture_stereo(save=False, rectify=False)
 # cv2.imshow('aaa',frame_left)
@@ -45,12 +46,19 @@ cam.rectify_img(img)
 #     time.sleep(1)
 
 
-# frame_left = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_L.jpg')
-# frame_right = cv2.imread('../data/raw/captures/stereo/cam2_154253530281275_R.jpg')
+# frame_left = cv2.imread('../data/raw/captures/stereo/cam2_1548075816280474_L.jpg')
+# frame_right = cv2.imread('../data/raw/captures/stereo/cam2_1548075816280474_R.jpg')
 
+# frame_left = cam.rectify_img(frame_left)
+# frame_right = cam.rectify_img(frame_right)
 
-# stereo_img = StereoImagesConverter(frame_left, frame_right)
-# disparity_map = stereo_img.create_disparity_map(save=False)
+frame_left, frame_right = cam.capture_stereo(save=False)
+# cv2.imshow('left', frame_left)
+# cv2.imshow('right', frame_right)
+# cv2.waitKey()
+stereo_img = StereoImagesConverter(frame_left, frame_right)
+disparity_map = stereo_img.create_disparity_map(save=False)
+# stereo_img.test_parameters()
 
 # frame_left = cv2.imread('../data/raw/captures/stereo/cam2_1542535287840006_L.jpg')
 # frame_right = cv2.imread('../data/raw/captures/stereo/cam2_1542535287840006_R.jpg')

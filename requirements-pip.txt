@@ -1,2 +1,3 @@
 opencv-python
 pyttsx3
+opencv-contrib-python

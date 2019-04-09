@@ -52,13 +52,13 @@ class Camera:
 
     def capture_stereo(self, path='../data/raw/captures/stereo', save=False, rectify=True):
         """Captures photos from stereo camera and saves it to given location."""
-        capture_left = cv2.VideoCapture(2)
+        capture_left = cv2.VideoCapture(self.mono_or_left_cam_nr)
         grabbed_left = capture_left.grab()
 
         if grabbed_left:
             ret_left, frame_left = capture_left.retrieve()
             capture_left.release()
-            capture_right = cv2.VideoCapture(4)
+            capture_right = cv2.VideoCapture(self.right_cam_nr)
             grabbed_right = capture_right.grab()
 
             if grabbed_right:
@@ -73,6 +73,35 @@ class Camera:
                     print('photo taken')
 
                 return ret_left, ret_right
+
+    def capture_constant_stereo_simultaneously(self):
+        capture_left = cv2.VideoCapture(self.mono_or_left_cam_nr)
+        capture_right = cv2.VideoCapture(self.right_cam_nr)
+
+        capture_left.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+        capture_left.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+        capture_left.set(cv2.CAP_PROP_FPS, 30)
+
+        capture_right.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+        capture_right.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+        capture_right.set(cv2.CAP_PROP_FPS, 30)
+
+        while True:
+            # Capture frame-by-frame
+            ret_l, frame_l = capture_left.read()
+            ret_r, frame_r = capture_right.read()
+
+            # Display the resulting frame
+            cv2.imshow('frame_r', frame_l)
+            cv2.imshow('frame_l', frame_r)
+
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
+        # When everything done, release the capture
+        capture_left.release()
+        capture_right.release()
+        cv2.destroyAllWindows()
 
     @staticmethod
     def calibrate():
