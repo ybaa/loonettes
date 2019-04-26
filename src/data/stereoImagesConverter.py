@@ -9,6 +9,7 @@ class StereoImagesConverter:
     def __init__(self, frame_left, frame_right):
         self.frame_left = frame_left
         self.frame_right = frame_right
+        self.disparity_map = None
 
     def create_disparity_map(self, save=False, show=True):
 
@@ -61,6 +62,8 @@ class StereoImagesConverter:
         filtered_img = cv2.normalize(src=filtered_img, dst=filtered_img, beta=0, alpha=255, norm_type=cv2.NORM_MINMAX)
         filtered_img = np.uint8(filtered_img)
 
+        self.disparity_map = filtered_img
+
         if show:
             self.show_disparity_map(filtered_img)
 
@@ -69,6 +72,25 @@ class StereoImagesConverter:
             print('disparity map saved')
 
         return filtered_img
+
+    def calculate_distance(self, dm):
+        fl = 580
+        offset = 0.062
+
+        # from the middle
+        w = int(dm.shape[0] / 2)
+        h = int(dm.shape[1] / 2)
+        v = dm[w][h]
+
+        distance = offset * fl / v
+        print(distance)
+
+        # d = 0.2
+        # f = d * offset / v
+        # print(f)
+
+        return distance
+
 
     def convert_bgr_2_gray(self):
         img_left = cv2.cvtColor(self.frame_left, cv2.COLOR_BGR2GRAY)

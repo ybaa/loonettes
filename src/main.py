@@ -29,7 +29,9 @@ from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDet
 # str_pred = cifar_helper.batches_meta[b'label_names'][pred[0]].decode("utf-8")
 # Speaker.say_recognition(str_pred)
 
-cam = Camera()
+# cam = Camera()
+# cam.show_constant_mono_capture(rectify=True)
+# cam.capture_stereo(save=True)
 # cam.capture_constant_stereo_simultaneously()
 # cam.calibrate()
 # img = cv2.imread('../data/raw/cameraCalibration/cam2_1554708578437131_L.jpg')
@@ -40,10 +42,13 @@ cam = Camera()
 # cv2.imshow('aaa',frame_left)
 # cv2.waitKey()
 
-# for i in range(20):
-#     frame_left, frame_right = cam.capture_stereo(save=True, rectify=False)
+# for i in range(10):
+#     frame_left, frame_right = cam.capture_stereo(save=True, rectify=True)
 #     Speaker.say_recognition(i)
-#     time.sleep(1)
+#     cv2.imshow(str(i), frame_left)
+#     cv2.waitKey()
+#     cv2.destroyAllWindows()
+#     # time.sleep(1)
 
 
 # frame_left = cv2.imread('../data/raw/captures/stereo/cam2_1548075816280474_L.jpg')
@@ -52,13 +57,15 @@ cam = Camera()
 # frame_left = cam.rectify_img(frame_left)
 # frame_right = cam.rectify_img(frame_right)
 
-frame_left, frame_right = cam.capture_stereo(save=False)
+# frame_left, frame_right = cam.capture_stereo(save=False)
 # cv2.imshow('left', frame_left)
 # cv2.imshow('right', frame_right)
-# cv2.waitKey()
-stereo_img = StereoImagesConverter(frame_left, frame_right)
-disparity_map = stereo_img.create_disparity_map(save=False)
-# stereo_img.test_parameters()
+# # cv2.waitKey()
+# stereo_img = StereoImagesConverter(frame_left, frame_right)
+# disparity_map = stereo_img.create_disparity_map(save=False)
+# # stereo_img.test_parameters()
+#
+# stereo_img.calculate_distance(disparity_map)
 
 # frame_left = cv2.imread('../data/raw/captures/stereo/cam2_1542535287840006_L.jpg')
 # frame_right = cv2.imread('../data/raw/captures/stereo/cam2_1542535287840006_R.jpg')
@@ -96,8 +103,8 @@ disparity_map = stereo_img.create_disparity_map(save=False)
 # single_img_divided_rescaled = MyDatasetHelper.resize_images(division_detector.divided_image)
 #
 #
-# my_cnn = CNNMyDataset()
-# helper = my_cnn.load_and_prepare_set()
+my_cnn = CNNMyDataset()
+helper = my_cnn.load_and_prepare_set()
 # my_cnn.run_learning_session(save=False)
 # pred_val = my_cnn.predict_single_image(helper.test_images[0])
 # pred_val_str = helper.le.inverse_transform([pred_val[0]])

@@ -5,7 +5,7 @@ from sklearn import preprocessing
 
 
 class MyDatasetHelper:
-    def __init__(self, train_batch, test_batch, batches_meta, labels_amount=2):
+    def __init__(self, train_batch, test_batch, batches_meta, labels_amount=8):
         self.i = 0
 
         self.test_batch = [test_batch]
@@ -24,10 +24,11 @@ class MyDatasetHelper:
 
         self.le = preprocessing.LabelEncoder()
 
-    def set_up_images(self, reshape_test_images=True):
+    def set_up_images(self, reshape_test_images=False):
         if len(self.training_images) > 0:
             print("Setting Up Training Images and Labels")
-            self.training_images = self.resize_images(self.training_images)
+            if reshape_test_images:
+                self.training_images = self.resize_images(self.training_images)
 
             # to numpy array and normalize
             self.training_images = np.asanyarray(self.training_images) / 255
@@ -81,12 +82,15 @@ class MyDatasetHelper:
 
         for i in range(0, len(images) - 1, 2):
             stereo_img = StereoImagesConverter(images[i], images[i + 1])
-            disparity_map = stereo_img.create_disparity_map()
+            disparity_map = stereo_img.create_disparity_map(show=False)
 
             frame_left_appended = stereo_img.append_img_with_disparity_map(images[i], disparity_map)
-            frame_right_appended = stereo_img.append_img_with_disparity_map(images[i + 1], disparity_map)
+            # frame_right_appended = stereo_img.append_img_with_disparity_map(images[i + 1], disparity_map)
 
+            # cv2.imshow(str(i), disparity_map)
+            # cv2.waitKey()
+            # cv2.destroyAllWindows()
             dataset_appended_with_disparity_maps.append(frame_left_appended)
-            dataset_appended_with_disparity_maps.append(frame_right_appended)
+            # dataset_appended_with_disparity_maps.append(frame_right_appended)
 
         return dataset_appended_with_disparity_maps

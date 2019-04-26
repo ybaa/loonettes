@@ -11,7 +11,7 @@ class Camera:
         self.mono_or_left_cam_nr = left_cam_nr
         self.right_cam_nr = right_cam_nr
 
-    def show_constant_mono_capture(self):
+    def show_constant_mono_capture(self, rectify=False):
         """Show window with constant capture from a single camera.
 
         Click: 'q' to quit, 's' to save capture
@@ -20,6 +20,7 @@ class Camera:
         while True:
             # Capture frame-by-frame
             ret, frame = capture.read()
+            frame = self.rectify_img(frame) if rectify else frame
 
             # Display the resulting frame
             cv2.imshow('frame', frame)

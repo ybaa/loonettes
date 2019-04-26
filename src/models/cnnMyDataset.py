@@ -58,8 +58,7 @@ class CNNMyDataset(CNNBase):
                 if i == iter_number - 1 and save:
                     self.save_model(sess, '../models/myConvo/model.ckpt')
 
-
-    def load_and_prepare_set(self, reshape_test_images=True, for_classification=True):
+    def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
         # my_dataset_loader.pickle_data()
@@ -70,7 +69,7 @@ class CNNMyDataset(CNNBase):
             test_batch, batch_meta = my_dataset_loader.load_dataset_for_detection()
             training_batch = []
 
-        my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=2)
+        my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=8)
         my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images)
 
         return my_dataset_helper

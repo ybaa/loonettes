@@ -2,27 +2,26 @@ import pickle
 import cv2
 import glob
 import csv
-
+from src.features.myDatasetHelper import MyDatasetHelper
+import itertools
+from sklearn.model_selection import train_test_split
 
 class MyDatasetLoader:
 
     def load_dataset_for_classification(self):
-        dirs_train = ['train', 'labels_p']
-        dirs_test = ['test', 'labels_p']
+        dirs = ['all_images_p', 'labels_p']
 
-        train_data = []
-        test_data = []
+        data = []
         meta = []
 
-        for dir in dirs_train:
-            train_data.append(self.unpickle('../data/raw/myDatasetClfs/train/' + dir))
-
-        for dir in dirs_test:
-            test_data.append(self.unpickle('../data/raw/myDatasetClfs/test/' + dir))
+        for dir in dirs:
+            data.append(self.unpickle('../data/raw/myDatasetClfs/' + dir))
 
         meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
 
-        return train_data, test_data, meta
+        X_train, X_test, y_train, y_test = train_test_split(data[0], data[1], test_size=0.2, random_state=42)
+
+        return [X_train, y_train], [X_test, y_test], meta
 
     def load_dataset_for_detection(self):
         dirs_test = ['test', 'labels_p']
@@ -33,46 +32,40 @@ class MyDatasetLoader:
         for dir in dirs_test:
             test_data.append(self.unpickle('../data/raw/myDatasetDetection/' + dir))
 
-        meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
+        meta.append(self.unpickle('../data/raw/myDatasetClfs/old/batch_meta_p'))
 
         return test_data, meta
 
     def pickle_data(self):
-        path = '../data/raw/myDatasetClfs/train/'
-        images = [cv2.imread(file) for file in glob.glob(path + "*.jpg")]
-        self.pickle(images, 'train', path)
+        base_path = '../data/raw/myDatasetClfs/'
+        dirs = ['backpack', 'bike', 'book', 'chair', 'coach', 'cup', 'phone', 'skateboard']
 
-        with open(path + 'labels' , newline='') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            data = []
-            for row in reader:
-                data.append(row)
+        images = []
+        classes = []
 
-            self.pickle(data[0], 'labels_p', path)
+        for dir in dirs:
+            path = base_path + dir + '/'
 
-        # pickle test
-        path = '../data/raw/myDatasetClfs/test/'
-        # path = '../data/raw/myDatasetDetection/'
-        images = [cv2.imread(file) for file in glob.glob(path + "*.jpg")]
-        self.pickle(images, 'test', path)
+            filenames = glob.glob(path + "*.jpg")
+            filenames.sort()
 
-        with open(path + 'labels' , newline='') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            data = []
-            for row in reader:
-                data.append(row)
+            single_class_images = [cv2.imread(file) for file in filenames]
 
-            self.pickle(data[0], 'labels_p', path)
+            reshaped = MyDatasetHelper.resize_images(single_class_images, shape=(592, 410))
 
-        # pickle meta
-        path = '../data/raw/myDatasetClfs/batch_meta'
-        with open(path , newline='') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            data = []
-            for row in reader:
-                data.append(row)
+            dataset_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
 
-            self.pickle(data[0], '_p', path)
+            images.append(dataset_appended_with_dm)
+            single_class = [dir] * len(dataset_appended_with_dm)
+            classes.append(single_class)
+
+        classes = list(itertools.chain(*classes))
+        images = list(itertools.chain(*images))
+
+        self.pickle(images, 'all_images_p', base_path)
+        self.pickle(classes, 'labels_p', base_path)
+        self.pickle(dirs, 'batch_meta_p', base_path)
+
 
     def unpickle(self, file):
         with open(file, 'rb') as fo:
