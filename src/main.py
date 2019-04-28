@@ -1,5 +1,5 @@
-# import os
-# os.environ['TF_CPP_MIN_LOG_LEVEL']='2'  # turn off warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'  # turn off warnings
 from src.data.camera import Camera
 from src.constants import STEREO_CAM
 from src.data.stereoImagesConverter import StereoImagesConverter
@@ -18,8 +18,8 @@ from src.features.myDatasetHelper import MyDatasetHelper
 from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDetectorManager
 
 
-# exp1 = MyDatasetAndDivisionDetectorManager()
-# exp1.test_for_3_channels()
+exp1 = MyDatasetAndDivisionDetectorManager()
+exp1.test_for_4_channels()
 
 # cnn = CNNCifar()
 # cnn.run_learning_session()
@@ -103,9 +103,9 @@ from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDet
 # single_img_divided_rescaled = MyDatasetHelper.resize_images(division_detector.divided_image)
 #
 #
-my_cnn = CNNMyDataset()
-helper = my_cnn.load_and_prepare_set()
-# my_cnn.run_learning_session(save=False)
+# my_cnn = CNNMyDataset()
+# helper = my_cnn.load_and_prepare_set(for_classification=False)
+# my_cnn.run_learning_session(save=True, restore=False)
 # pred_val = my_cnn.predict_single_image(helper.test_images[0])
 # pred_val_str = helper.le.inverse_transform([pred_val[0]])
 # print(pred_val_str[0])

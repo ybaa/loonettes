@@ -5,11 +5,12 @@ from src.data.myDatasetLoader import MyDatasetLoader
 from src.features.myDatasetHelper import MyDatasetHelper
 from tensorflow.python import debug as tf_debug
 import numpy as np
+from src.constants import LABELS_AMOUNT, CURR_CHANNELS, CURR_HEIGHT, CURR_WIDTH
 
 
 class CNNMyDataset(CNNBase):
 
-    def __init__(self, img_size=[120, 160], labels_amount=2, channels=3):
+    def __init__(self, img_size=[CURR_HEIGHT, CURR_WIDTH], labels_amount=LABELS_AMOUNT, channels=CURR_CHANNELS):
         pass
         self.x_shape = [None, img_size[0], img_size[1], channels]
         self.y_true_shape = [None, labels_amount]
@@ -18,13 +19,13 @@ class CNNMyDataset(CNNBase):
         self.y_true = tf.placeholder(tf.float32, shape=self.y_true_shape)
         self.hold_prob = tf.placeholder(tf.float32)
 
-        self.y_pred, self.train_step = self.create_layers(self.x, self.y_true, self.hold_prob)
+        self.y_pred, self.train_step = self.create_layers(self.x, self.y_true, self.hold_prob, channels)
 
     def run_learning_session(self, restore=False, save=False):
 
-        my_dataset_helper = self.load_and_prepare_set()
+        my_dataset_helper = self.load_and_prepare_set(reshape_test_images=False)
 
-        iter_number = 501  # it should be much bigger but this value is set for developing
+        iter_number = 1001  # it should be much bigger but this value is set for developing
 
         with tf.Session() as sess:
 
@@ -36,7 +37,7 @@ class CNNMyDataset(CNNBase):
             # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
             for i in range(iter_number):
-                batch = my_dataset_helper.next_batch(4)
+                batch = my_dataset_helper.next_batch(20)
                 sess.run(self.train_step, feed_dict={self.x: batch[0],
                                                      self.y_true: batch[1],
                                                      self.hold_prob: 0.5})
@@ -61,7 +62,8 @@ class CNNMyDataset(CNNBase):
     def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
-        # my_dataset_loader.pickle_data()
+        # my_dataset_loader.pickle_classification_data()
+        # my_dataset_loader.pickle_detection_data()
 
         if for_classification:
             training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()
@@ -69,14 +71,14 @@ class CNNMyDataset(CNNBase):
             test_batch, batch_meta = my_dataset_loader.load_dataset_for_detection()
             training_batch = []
 
-        my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=8)
-        my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images)
+        my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=LABELS_AMOUNT)
+        my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images, detection=not for_classification)
 
         return my_dataset_helper
 
 
-    def create_layers(self, x, y_true, hold_prob):
-        convo_1 = self.convolutional_layer(x, shape=[4, 4, 3, 32])
+    def create_layers(self, x, y_true, hold_prob, channels):
+        convo_1 = self.convolutional_layer(x, shape=[4, 4, channels, 32])
         convo_1_pooling = self.max_pool_2by2(convo_1)
 
         convo_2 = self.convolutional_layer(convo_1_pooling, shape=[4, 4, 32, 64])
@@ -88,7 +90,7 @@ class CNNMyDataset(CNNBase):
 
         full_one_dropout = tf.nn.dropout(full_layer_one, keep_prob=hold_prob)
 
-        y_pred = self.normal_full_layer(full_one_dropout, 2)
+        y_pred = self.normal_full_layer(full_one_dropout, LABELS_AMOUNT)
 
         cross_entropy = self.create_loss_function(y_pred, y_true)
 

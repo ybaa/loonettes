@@ -7,6 +7,7 @@ class MyDatasetAndDivisionDetectorManager:
     def __init__(self):
         pass
 
+    # probably not working, should be adjusted for new dataset
     def test_for_3_channels(self):
         correct_answers = 0
         tested_images = 1
@@ -34,3 +35,6 @@ class MyDatasetAndDivisionDetectorManager:
             tested_images += 1
 
         print('final acc: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))
+
+    def test_for_4_channels(self):
+        print('TODO')

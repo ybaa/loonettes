@@ -19,24 +19,24 @@ class MyDatasetLoader:
 
         meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
 
-        X_train, X_test, y_train, y_test = train_test_split(data[0], data[1], test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(data[0], data[1], test_size=0.3, random_state=42)
 
         return [X_train, y_train], [X_test, y_test], meta
 
     def load_dataset_for_detection(self):
-        dirs_test = ['test', 'labels_p']
+        dirs_test = ['images_p', 'labels_p']
 
-        test_data = []
+        images = []
         meta = []
 
         for dir in dirs_test:
-            test_data.append(self.unpickle('../data/raw/myDatasetDetection/' + dir))
+            images.append(self.unpickle('../data/raw/myDatasetDetection/' + dir))
 
-        meta.append(self.unpickle('../data/raw/myDatasetClfs/old/batch_meta_p'))
+        meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
 
-        return test_data, meta
+        return images, meta
 
-    def pickle_data(self):
+    def pickle_classification_data(self):
         base_path = '../data/raw/myDatasetClfs/'
         dirs = ['backpack', 'bike', 'book', 'chair', 'coach', 'cup', 'phone', 'skateboard']
 
@@ -51,7 +51,7 @@ class MyDatasetLoader:
 
             single_class_images = [cv2.imread(file) for file in filenames]
 
-            reshaped = MyDatasetHelper.resize_images(single_class_images, shape=(592, 410))
+            reshaped = MyDatasetHelper.resize_images(single_class_images, shape=(160, 120))
 
             dataset_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
 
@@ -65,6 +65,24 @@ class MyDatasetLoader:
         self.pickle(images, 'all_images_p', base_path)
         self.pickle(classes, 'labels_p', base_path)
         self.pickle(dirs, 'batch_meta_p', base_path)
+
+    def pickle_detection_data(self):
+        path = '../data/raw/myDatasetDetection/'
+
+        filenames = glob.glob(path + "images/*.jpg")
+        filenames.sort()
+
+        images = [cv2.imread(file) for file in filenames]
+
+        with open(path + "labels", newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            data = []
+            for row in reader:
+                data.append(row)
+
+            self.pickle(data, 'labels_p', path)
+
+        self.pickle(images, 'images_p', path)
 
 
     def unpickle(self, file):

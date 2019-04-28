@@ -2,10 +2,11 @@ from src.data.stereoImagesConverter import StereoImagesConverter
 import cv2
 import numpy as np
 from sklearn import preprocessing
+from src.constants import LABELS_AMOUNT, CURR_WIDTH, CURR_HEIGHT, CURR_CHANNELS
 
 
 class MyDatasetHelper:
-    def __init__(self, train_batch, test_batch, batches_meta, labels_amount=8):
+    def __init__(self, train_batch, test_batch, batches_meta, labels_amount=LABELS_AMOUNT):
         self.i = 0
 
         self.test_batch = [test_batch]
@@ -24,7 +25,7 @@ class MyDatasetHelper:
 
         self.le = preprocessing.LabelEncoder()
 
-    def set_up_images(self, reshape_test_images=False):
+    def set_up_images(self, reshape_test_images=False, detection=False):
         if len(self.training_images) > 0:
             print("Setting Up Training Images and Labels")
             if reshape_test_images:
@@ -49,12 +50,13 @@ class MyDatasetHelper:
 
             # encode labels
             self.le.fit(self.batches_meta[0])
-            self.test_batches_encoded = self.le.transform(self.test_labels)
 
-            self.test_labels = self.one_hot_encode(np.asanyarray(self.test_batches_encoded))
+            self.test_batches_encoded = [self.le.transform(label) for label in self.test_labels] if detection else self.le.transform(self.test_labels)
+
+            self.test_labels = [self.one_hot_encode(np.asanyarray(label)) for label in self.test_batches_encoded] if detection else self.one_hot_encode(np.asanyarray(self.test_batches_encoded))
 
     def next_batch(self, batch_size):
-        x = self.training_images[self.i:self.i + batch_size].reshape(batch_size, 120, 160, 3)
+        x = self.training_images[self.i:self.i + batch_size].reshape(batch_size, CURR_HEIGHT, CURR_WIDTH, CURR_CHANNELS)
         y = self.training_labels[self.i:self.i + batch_size]
         self.i = (self.i + batch_size) % len(self.training_images)
         return x, y
