@@ -74,6 +74,11 @@ class MyDatasetLoader:
 
         images = [cv2.imread(file) for file in filenames]
 
+        # for 4 channels
+        reshaped = MyDatasetHelper.resize_images(images, shape=(640, 480))
+
+        images_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
+
         with open(path + "labels", newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             data = []
@@ -82,7 +87,7 @@ class MyDatasetLoader:
 
             self.pickle(data, 'labels_p', path)
 
-        self.pickle(images, 'images_p', path)
+        self.pickle(images_appended_with_dm, 'images_p', path)
 
 
     def unpickle(self, file):

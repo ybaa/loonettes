@@ -6,6 +6,7 @@ from src.features.myDatasetHelper import MyDatasetHelper
 from tensorflow.python import debug as tf_debug
 import numpy as np
 from src.constants import LABELS_AMOUNT, CURR_CHANNELS, CURR_HEIGHT, CURR_WIDTH
+import cv2
 
 
 class CNNMyDataset(CNNBase):
@@ -63,7 +64,7 @@ class CNNMyDataset(CNNBase):
 
         my_dataset_loader = MyDatasetLoader()
         # my_dataset_loader.pickle_classification_data()
-        # my_dataset_loader.pickle_detection_data()
+        my_dataset_loader.pickle_detection_data()
 
         if for_classification:
             training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()
@@ -113,24 +114,38 @@ class CNNMyDataset(CNNBase):
 
             self.restore_model(sess, '../models/myConvo/model.ckpt')
 
-            img_reshaped = np.reshape(img, (1, 120, 160, 3))
+            # cv2.imshow('a', img)
+            # cv2.waitKey()
+            # cv2.destroyAllWindows()
 
-            #output from nn
+            img_reshaped = np.reshape(img, (1, 120, 160, 4))
+
+            # output from nn
             pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
                                                             self.hold_prob: 1.0})
 
-            #most probable one
+            # most probable one
             pred_max_index = tf.argmax(self.y_pred, 1)
 
             # index / class
             index = sess.run(pred_max_index, feed_dict={self.x: img_reshaped,
                                                         self.hold_prob: 1.0})
 
-            pred_val_nn_output_value = pred_one_hot[0][index[0]]
+            # probability
+            prob = sess.run(tf.nn.softmax(logits=pred_one_hot))
 
-            # now im testing for 2 claasses so it's sensless to always return prediction
-            # todo: find reliable value by setting the border
-            if pred_val_nn_output_value < 3:
+            pred_val_nn_output_value = pred_one_hot[0][index[0]]
+            prob_val = prob[0][index[0]]
+
+            # print(index)
+            # print(pred_val_nn_output_value)
+            # print(pred_one_hot[0])
+            # print(prob)
+            # print(prob_val)
+            # print('-----------')
+
+            # if pred_val_nn_output_value < 3:
+            if prob_val < 0.90:
                 return None
 
             return index
