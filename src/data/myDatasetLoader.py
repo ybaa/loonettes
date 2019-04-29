@@ -16,9 +16,9 @@ class MyDatasetLoader:
         meta = []
 
         for dir in dirs:
-            data.append(self.unpickle('../data/raw/myDatasetClfs/' + dir))
+            data.append(self.unpickle('../data/raw/myDatasetClfs/' + str(CURR_CHANNELS) + 'ch/' + dir))
 
-        meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
+        meta.append(self.unpickle('../data/raw/myDatasetClfs/' + str(CURR_CHANNELS) + 'ch/batch_meta_p'))
 
         X_train, X_test, y_train, y_test = train_test_split(data[0], data[1], test_size=0.3, random_state=42)
 
@@ -31,9 +31,9 @@ class MyDatasetLoader:
         meta = []
 
         for dir in dirs_test:
-            images.append(self.unpickle('../data/raw/myDatasetDetection/' + dir))
+            images.append(self.unpickle('../data/raw/myDatasetDetection/' + str(CURR_CHANNELS) + 'ch/' + dir))
 
-        meta.append(self.unpickle('../data/raw/myDatasetClfs/batch_meta_p'))
+        meta.append(self.unpickle('../data/raw/myDatasetClfs/'+ str(CURR_CHANNELS) +'ch/batch_meta_p'))
 
         return images, meta
 

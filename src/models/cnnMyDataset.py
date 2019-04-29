@@ -63,8 +63,8 @@ class CNNMyDataset(CNNBase):
     def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
-        my_dataset_loader.pickle_classification_data()
-        my_dataset_loader.pickle_detection_data()
+        # my_dataset_loader.pickle_classification_data()
+        # my_dataset_loader.pickle_detection_data()
 
         if for_classification:
             training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()
@@ -112,7 +112,7 @@ class CNNMyDataset(CNNBase):
         with tf.Session() as sess:
             # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
-            self.restore_model(sess, '../models/myConvo/model.ckpt')
+            self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
 
             # cv2.imshow('a', img)
             # cv2.waitKey()

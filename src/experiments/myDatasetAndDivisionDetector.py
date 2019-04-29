@@ -8,7 +8,7 @@ class MyDatasetAndDivisionDetectorManager:
         pass
 
     # works both for 4 and 3 channels
-    def test(self):
+    def test_detection(self):
         correct_answers = 0     # all objects recognized
         correct_min_one_object_recognized = 0 # minimum one object found
         tested_images = 1

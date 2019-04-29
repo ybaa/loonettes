@@ -19,7 +19,7 @@ from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDet
 
 
 exp1 = MyDatasetAndDivisionDetectorManager()
-exp1.test_for_4_channels()
+exp1.test_detection()
 # exp1.test_for_3_channels()
 
 # cnn = CNNCifar()
