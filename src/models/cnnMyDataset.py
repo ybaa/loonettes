@@ -26,7 +26,7 @@ class CNNMyDataset(CNNBase):
 
         my_dataset_helper = self.load_and_prepare_set(reshape_test_images=False)
 
-        iter_number = 1001  # it should be much bigger but this value is set for developing
+        iter_number = 1001
 
         with tf.Session() as sess:
 
@@ -76,7 +76,6 @@ class CNNMyDataset(CNNBase):
         my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images, detection=not for_classification)
 
         return my_dataset_helper
-
 
     def create_layers(self, x, y_true, hold_prob, channels):
         convo_1 = self.convolutional_layer(x, shape=[4, 4, channels, 32])

@@ -7,7 +7,7 @@ class MyDatasetAndDivisionDetectorManager:
     def __init__(self):
         pass
 
-    # works both for 4 and 3 channels
+    # works both for 4 and 3 channels (set in constants.py)
     def test_detection(self):
         correct_answers = 0     # all objects recognized
         correct_min_one_object_recognized = 0 # minimum one object found

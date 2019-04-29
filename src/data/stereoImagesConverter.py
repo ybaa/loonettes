@@ -73,6 +73,7 @@ class StereoImagesConverter:
 
         return filtered_img
 
+    # not working, still todo
     def calculate_distance(self, dm):
         fl = 580
         offset = 0.062

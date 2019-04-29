@@ -34,10 +34,18 @@
 |   |
 │   ├── main.py        <- Makes src a Python module
 |   |
+│   ├── constants.py   <- Constants to set, kind of config file
+|   |
+│   ├── cam_dist       <- Camera calibration parameters for my camera
+│   ├── cam_mtx        
+│   ├── cam_newcameramtx
+│   ├── cam_roi        
+|   |
 │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-│       └── visualize.py
+│
 ├── README.md          <- The top-level README.│
-└── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
+├── requirements-conda 
+└── requirements-pip.txt   <- The requirements file for reproducing the analysis environment, e.g.
 │                         generated with `pip freeze > requirements.txt`
 ```
 

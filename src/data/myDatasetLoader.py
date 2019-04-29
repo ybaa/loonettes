@@ -104,7 +104,6 @@ class MyDatasetLoader:
 
             self.pickle(data, 'labels_p', path)
 
-
     def unpickle(self, file):
         with open(file, 'rb') as fo:
             dataset_dict = pickle.load(fo, encoding='bytes')
