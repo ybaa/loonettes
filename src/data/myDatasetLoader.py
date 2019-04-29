@@ -5,6 +5,7 @@ import csv
 from src.features.myDatasetHelper import MyDatasetHelper
 import itertools
 from sklearn.model_selection import train_test_split
+from src.constants import CURR_CHANNELS
 
 class MyDatasetLoader:
 
@@ -49,15 +50,24 @@ class MyDatasetLoader:
             filenames = glob.glob(path + "*.jpg")
             filenames.sort()
 
-            single_class_images = [cv2.imread(file) for file in filenames]
+            if CURR_CHANNELS == 3:
+                single_class_images = [cv2.imread(file) for file in filenames if file[-5:] == 'L.jpg']
+                reshaped = MyDatasetHelper.resize_images(single_class_images, shape=(160, 120))
+                images.append(reshaped)
+                single_class = [dir] * len(reshaped)
+                classes.append(single_class)
 
-            reshaped = MyDatasetHelper.resize_images(single_class_images, shape=(160, 120))
+            elif CURR_CHANNELS == 4:
+                single_class_images = [cv2.imread(file) for file in filenames]
+                reshaped = MyDatasetHelper.resize_images(single_class_images, shape=(160, 120))
+                dataset_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
+                images.append(dataset_appended_with_dm)
+                single_class = [dir] * len(dataset_appended_with_dm)
+                classes.append(single_class)
 
-            dataset_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
-
-            images.append(dataset_appended_with_dm)
-            single_class = [dir] * len(dataset_appended_with_dm)
-            classes.append(single_class)
+            else:
+                print('invalid channles')
+                return None
 
         classes = list(itertools.chain(*classes))
         images = list(itertools.chain(*images))
@@ -72,12 +82,19 @@ class MyDatasetLoader:
         filenames = glob.glob(path + "images/*.jpg")
         filenames.sort()
 
-        images = [cv2.imread(file) for file in filenames]
+        if CURR_CHANNELS == 3:
+            images = [cv2.imread(file) for file in filenames if file[-5:] == 'L.jpg']
+            self.pickle(images, 'images_p', path)
 
-        # for 4 channels
-        reshaped = MyDatasetHelper.resize_images(images, shape=(640, 480))
+        elif CURR_CHANNELS == 4:
+            images = [cv2.imread(file) for file in filenames]
+            reshaped = MyDatasetHelper.resize_images(images, shape=(640, 480))
+            images_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
+            self.pickle(images_appended_with_dm, 'images_p', path)
 
-        images_appended_with_dm = MyDatasetHelper.crete_disparity_maps_serial(reshaped)
+        else:
+            print('invalid channles')
+            return None
 
         with open(path + "labels", newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
@@ -86,8 +103,6 @@ class MyDatasetLoader:
                 data.append(row)
 
             self.pickle(data, 'labels_p', path)
-
-        self.pickle(images_appended_with_dm, 'images_p', path)
 
 
     def unpickle(self, file):

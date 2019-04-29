@@ -7,37 +7,10 @@ class MyDatasetAndDivisionDetectorManager:
     def __init__(self):
         pass
 
-    # probably not working, should be adjusted for new dataset
-    def test_for_3_channels(self):
-        correct_answers = 0
-        tested_images = 1
-        my_cnn = CNNMyDataset()
-        my_dataset_helper = my_cnn.load_and_prepare_set(reshape_test_images=False, for_classification=False)
-        division_detector = DivisionDetector()
-
-        for test_image, test_label in zip(my_dataset_helper.test_images, my_dataset_helper.test_batches_encoded):
-            division_detector.divided_image = []
-            division_detector.divided_image.append(test_image)
-            division_detector.divide_recursively(2, test_image)
-            single_img_divided_rescaled = my_dataset_helper.resize_images(division_detector.divided_image)
-
-            single_img_predictions = []
-            for part_of_image in single_img_divided_rescaled:
-                part_img_pred_val = my_cnn.predict_single_image(part_of_image)
-
-                if part_img_pred_val is not None:
-                    single_img_predictions.append(part_img_pred_val[0])
-
-            if test_label in single_img_predictions:
-                correct_answers += 1
-
-            print('current acc: ' + str(correct_answers / tested_images) + ' on step ' + str(tested_images))
-            tested_images += 1
-
-        print('final acc: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))
-
-    def test_for_4_channels(self):
-        correct_answers = 0
+    # works both for 4 and 3 channels
+    def test(self):
+        correct_answers = 0     # all objects recognized
+        correct_min_one_object_recognized = 0 # minimum one object found
         tested_images = 1
         my_cnn = CNNMyDataset()
         my_dataset_helper = my_cnn.load_and_prepare_set(reshape_test_images=False, for_classification=False)
@@ -56,11 +29,21 @@ class MyDatasetAndDivisionDetectorManager:
                 if part_img_pred_val is not None:
                     single_img_predictions.append(part_img_pred_val[0])
 
+            recognized_objects_on_single_photo = 0
             for test_label in test_labels:
                 if test_label in single_img_predictions:
-                    correct_answers += 1
+                    recognized_objects_on_single_photo += 1
 
-            print('current acc: ' + str(correct_answers / tested_images) + ' on step ' + str(tested_images))
+            if recognized_objects_on_single_photo == len(test_labels):
+                correct_answers += 1
+
+            if recognized_objects_on_single_photo > 0:
+                correct_min_one_object_recognized += 1
+
+            print('current acc for all objects: ' + str(correct_answers / tested_images) + ' on step ' + str(tested_images))
+            print('current acc for min 1 object: ' + str(correct_min_one_object_recognized / tested_images) + ' on step ' + str(tested_images))
             tested_images += 1
+            print('----------------------------------------')
 
-        print('final acc: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))
+        print('final acc for all objects: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))
+        print('final acc for min 1 object: ' + str(correct_min_one_object_recognized / len(my_dataset_helper.test_batches_encoded)))

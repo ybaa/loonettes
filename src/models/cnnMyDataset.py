@@ -63,7 +63,7 @@ class CNNMyDataset(CNNBase):
     def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
-        # my_dataset_loader.pickle_classification_data()
+        my_dataset_loader.pickle_classification_data()
         my_dataset_loader.pickle_detection_data()
 
         if for_classification:
@@ -118,7 +118,7 @@ class CNNMyDataset(CNNBase):
             # cv2.waitKey()
             # cv2.destroyAllWindows()
 
-            img_reshaped = np.reshape(img, (1, 120, 160, 4))
+            img_reshaped = np.reshape(img, (1, CURR_HEIGHT, CURR_WIDTH, CURR_CHANNELS))
 
             # output from nn
             pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
@@ -134,7 +134,7 @@ class CNNMyDataset(CNNBase):
             # probability
             prob = sess.run(tf.nn.softmax(logits=pred_one_hot))
 
-            pred_val_nn_output_value = pred_one_hot[0][index[0]]
+            pred_val_nn_output_value = pred_one_hot[0][index[0]]    # pure output from nn
             prob_val = prob[0][index[0]]
 
             # print(index)

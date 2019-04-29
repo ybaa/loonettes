@@ -20,6 +20,7 @@ from src.experiments.myDatasetAndDivisionDetector import MyDatasetAndDivisionDet
 
 exp1 = MyDatasetAndDivisionDetectorManager()
 exp1.test_for_4_channels()
+# exp1.test_for_3_channels()
 
 # cnn = CNNCifar()
 # cnn.run_learning_session()
@@ -51,8 +52,8 @@ exp1.test_for_4_channels()
 #     # time.sleep(1)
 
 
-# frame_left = cv2.imread('../data/raw/captures/stereo/cam2_1548075816280474_L.jpg')
-# frame_right = cv2.imread('../data/raw/captures/stereo/cam2_1548075816280474_R.jpg')
+# frame_left = cv2.imread('../data/raw/captures/stereo/coach/cam2_1555243032803059_L.jpg')
+# frame_right = cv2.imread('../data/raw/captures/stereo/coach/cam2_1555243032803059_R.jpg')
 
 # frame_left = cam.rectify_img(frame_left)
 # frame_right = cam.rectify_img(frame_right)
