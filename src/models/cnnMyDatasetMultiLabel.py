@@ -9,10 +9,12 @@ from src.constants import LABELS_AMOUNT, CURR_CHANNELS, CURR_HEIGHT, CURR_WIDTH
 import cv2
 
 
-class CNNMyDataset(CNNBase):
+class CNNMyDatasetMultiLabel(CNNBase):
 
-    def __init__(self, img_size=[CURR_HEIGHT, CURR_WIDTH], labels_amount=LABELS_AMOUNT, channels=CURR_CHANNELS):
+    def __init__(self, curr_class, img_size=[CURR_HEIGHT, CURR_WIDTH], channels=CURR_CHANNELS):
         pass
+        self.curr_class = curr_class
+        labels_amount = 2
         self.x_shape = [None, img_size[0], img_size[1], channels]
         self.y_true_shape = [None, labels_amount]
 
@@ -31,7 +33,7 @@ class CNNMyDataset(CNNBase):
         with tf.Session() as sess:
 
             if restore:
-                self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
+                self.restore_model(sess, '../models/myConvo/4chmlc/' + self.curr_class + 'model.ckpt')
             else:
                 sess.run(tf.global_variables_initializer())
 
@@ -58,21 +60,24 @@ class CNNMyDataset(CNNBase):
                     print('\n')
 
                 if i == iter_number - 1 and save:
-                    self.save_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
+                    self.save_model(sess, '../models/myConvo/4chmlc/' + self.curr_class + '/model.ckpt')
 
     def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
-        # my_dataset_loader.pickle_classification_data()
-        # my_dataset_loader.pickle_detection_data()
+        # classes = ['backpack', 'bike', 'book', 'chair', 'coach', 'cup', 'phone', 'skateboard']
+        #
+        # for cls in classes:
+        #     my_dataset_loader.pickle_classification_data_for_mlc(cls)
 
         if for_classification:
-            training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()
-        else:
-            test_batch, batch_meta = my_dataset_loader.load_dataset_for_detection()
-            training_batch = []
-
-        my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=LABELS_AMOUNT)
+            training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_multi_label_classification(self.curr_class)
+        # else:
+        # todo
+        #     test_batch, batch_meta = my_dataset_loader.load_dataset_for_detection()
+        #     training_batch = []
+        #
+        my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=2)
         my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images, detection=not for_classification)
 
         return my_dataset_helper
@@ -90,7 +95,7 @@ class CNNMyDataset(CNNBase):
 
         full_one_dropout = tf.nn.dropout(full_layer_one, keep_prob=hold_prob)
 
-        y_pred = self.normal_full_layer(full_one_dropout, LABELS_AMOUNT)
+        y_pred = self.normal_full_layer(full_one_dropout, 2)
 
         cross_entropy = self.create_loss_function(y_pred, y_true)
 
