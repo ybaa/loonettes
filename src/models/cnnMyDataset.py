@@ -26,7 +26,7 @@ class CNNMyDataset(CNNBase):
 
         my_dataset_helper = self.load_and_prepare_set(reshape_test_images=False)
 
-        iter_number = 1001
+        iter_number = 201
 
         with tf.Session() as sess:
 
@@ -64,7 +64,7 @@ class CNNMyDataset(CNNBase):
 
         my_dataset_loader = MyDatasetLoader()
         # my_dataset_loader.pickle_classification_data()
-        # my_dataset_loader.pickle_detection_data()
+        my_dataset_loader.pickle_detection_data()
 
         if for_classification:
             training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()

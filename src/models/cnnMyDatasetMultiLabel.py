@@ -11,7 +11,7 @@ import cv2
 
 class CNNMyDatasetMultiLabel(CNNBase):
 
-    def __init__(self, curr_class, img_size=[CURR_HEIGHT, CURR_WIDTH], channels=CURR_CHANNELS):
+    def __init__(self, curr_class='cokolwiek', img_size=[CURR_HEIGHT, CURR_WIDTH], channels=CURR_CHANNELS):
         pass
         self.curr_class = curr_class
         labels_amount = 2
@@ -28,12 +28,12 @@ class CNNMyDatasetMultiLabel(CNNBase):
 
         my_dataset_helper = self.load_and_prepare_set(reshape_test_images=False)
 
-        iter_number = 1001
+        iter_number = 201
 
         with tf.Session() as sess:
 
             if restore:
-                self.restore_model(sess, '../models/myConvo/4chmlc/' + self.curr_class + 'model.ckpt')
+                self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'chmlc/' + self.curr_class + 'model.ckpt')
             else:
                 sess.run(tf.global_variables_initializer())
 
@@ -60,7 +60,7 @@ class CNNMyDatasetMultiLabel(CNNBase):
                     print('\n')
 
                 if i == iter_number - 1 and save:
-                    self.save_model(sess, '../models/myConvo/4chmlc/' + self.curr_class + '/model.ckpt')
+                    self.save_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'chmlc/' + self.curr_class + '/model.ckpt')
 
     def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
@@ -70,13 +70,14 @@ class CNNMyDatasetMultiLabel(CNNBase):
         # for cls in classes:
         #     my_dataset_loader.pickle_classification_data_for_mlc(cls)
 
+        # my_dataset_loader.pickle_detection_data_for_mlc()
+
         if for_classification:
             training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_multi_label_classification(self.curr_class)
-        # else:
-        # todo
-        #     test_batch, batch_meta = my_dataset_loader.load_dataset_for_detection()
-        #     training_batch = []
-        #
+        else:
+            test_batch, batch_meta = my_dataset_loader.load_dataset_for_multi_label_detection()
+            training_batch = []
+
         my_dataset_helper = MyDatasetHelper(training_batch, test_batch, batch_meta, labels_amount=2)
         my_dataset_helper.set_up_images(reshape_test_images=reshape_test_images, detection=not for_classification)
 
@@ -116,40 +117,49 @@ class CNNMyDatasetMultiLabel(CNNBase):
         with tf.Session() as sess:
             # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
-            self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
-
-            # cv2.imshow('a', img)
-            # cv2.waitKey()
-            # cv2.destroyAllWindows()
+            classes = ['backpack', 'bike', 'book', 'chair', 'coach', 'cup', 'phone', 'skateboard']
 
             img_reshaped = np.reshape(img, (1, CURR_HEIGHT, CURR_WIDTH, CURR_CHANNELS))
 
-            # output from nn
-            pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
+            recognition = None
+            recognition_prob = 0;
+
+            for (i, cls) in enumerate(classes):
+
+                self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'chmlc/' + cls + '/model.ckpt')
+
+                # cv2.imshow('a', img)
+                # cv2.waitKey()
+                # cv2.destroyAllWindows()
+
+
+                # output from nn
+                pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
+                                                                self.hold_prob: 1.0})
+
+                # most probable one
+                pred_max_index = tf.argmax(self.y_pred, 1)
+
+                # index / class
+                index = sess.run(pred_max_index, feed_dict={self.x: img_reshaped,
                                                             self.hold_prob: 1.0})
 
-            # most probable one
-            pred_max_index = tf.argmax(self.y_pred, 1)
+                # probability
+                prob = sess.run(tf.nn.softmax(logits=pred_one_hot))
 
-            # index / class
-            index = sess.run(pred_max_index, feed_dict={self.x: img_reshaped,
-                                                        self.hold_prob: 1.0})
+                pred_val_nn_output_value = pred_one_hot[0][index[0]]    # pure output from nn
+                prob_val = prob[0][index[0]]
 
-            # probability
-            prob = sess.run(tf.nn.softmax(logits=pred_one_hot))
+                # print(index)
+                # print(pred_val_nn_output_value)
+                # print(pred_one_hot[0])
+                # print(prob)
+                # print(prob_val)
+                # print('-----------')
 
-            pred_val_nn_output_value = pred_one_hot[0][index[0]]    # pure output from nn
-            prob_val = prob[0][index[0]]
+                if index == 1 and prob_val > 0.9:
+                    if prob_val > recognition_prob:
+                        recognition = i
 
-            # print(index)
-            # print(pred_val_nn_output_value)
-            # print(pred_one_hot[0])
-            # print(prob)
-            # print(prob_val)
-            # print('-----------')
+            return recognition
 
-            # if pred_val_nn_output_value < 3:
-            if prob_val < 0.90:
-                return None
-
-            return index
