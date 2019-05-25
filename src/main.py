@@ -3,12 +3,17 @@ from src.models.cnnMyDataset import CNNMyDataset
 from src.models.cnnMyDatasetMultiLabel import CNNMyDatasetMultiLabel
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # turn off warnings
+from src.visualization.deviceManager import DeviceManager
+
+
+dm = DeviceManager()
+dm.run()
 
 
 # # 1 CNN
 # # detection test
-exp1 = MyDatasetAndDivisionDetectorManager()
-exp1.test_detection(save_csv=True)
+# exp1 = MyDatasetAndDivisionDetectorManager()
+# exp1.test_detection(save_csv=False)
 #
 # # learning sess
 # cnn = CNNMyDataset()

@@ -163,4 +163,4 @@ class CNNMyDataset(CNNBase):
         if prob_val < 0.90:
             return None
 
-        return index
+        return index, prob_val

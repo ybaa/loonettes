@@ -34,7 +34,7 @@ class MyDatasetAndDivisionDetectorManager:
 
                 start = time.time()
                 for part_of_image in single_img_divided_rescaled:
-                    part_img_pred_val = my_cnn.predict_single_image(part_of_image, sess)
+                    part_img_pred_val, prob_val = my_cnn.predict_single_image(part_of_image, sess)
 
                     if part_img_pred_val is not None:
                         single_img_predictions.append(part_img_pred_val[0])
@@ -94,7 +94,7 @@ class MyDatasetAndDivisionDetectorManager:
                 start = time.time()
 
                 for part_of_image in single_img_divided_rescaled:
-                    part_img_pred_val = my_cnn.predict_single_image(part_of_image, sess)
+                    part_img_pred_val, prob_val = my_cnn.predict_single_image(part_of_image, sess)
 
                     if part_img_pred_val is not None:
                         single_img_predictions.append(part_img_pred_val)
