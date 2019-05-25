@@ -20,6 +20,10 @@ class MyDatasetHelper:
         self.labels_amount = labels_amount
 
         self.batches_meta = batches_meta
+        self.training_batches_encoded = None
+        self.test_batches_encoded = None
+
+        self.le = preprocessing.LabelEncoder()
 
 
     def set_up_images(self, reshape_test_images=False, detection=False):
@@ -32,7 +36,13 @@ class MyDatasetHelper:
             self.training_images = np.asanyarray(self.training_images) / 255
 
             # encode labels
-            self.training_labels = self.one_hot_encode(np.asanyarray(self.training_labels))
+            if LABELS_AMOUNT == 2:
+                self.training_labels = self.one_hot_encode(np.asanyarray(self.training_labels))
+            else:
+                self.le.fit(self.batches_meta[0])
+                self.training_batches_encoded = self.le.transform(self.training_labels)
+
+                self.training_labels = self.one_hot_encode(np.asanyarray(self.training_batches_encoded))
 
         if len(self.test_images) > 0:
             print("Setting Up Test Images and Labels")
@@ -43,7 +53,17 @@ class MyDatasetHelper:
             self.test_images = np.asanyarray(self.test_images) / 255
 
             # encode labels
-            self.test_labels = self.test_labels if detection else self.one_hot_encode(np.asanyarray(self.test_labels))
+            if LABELS_AMOUNT == 2:
+                self.test_labels = self.test_labels if detection else self.one_hot_encode(np.asanyarray(self.test_labels))
+            else:
+                self.le.fit(self.batches_meta[0])
+
+                self.test_batches_encoded = [self.le.transform(label) for label in
+                                             self.test_labels] if detection else self.le.transform(self.test_labels)
+
+                self.test_labels = [self.one_hot_encode(np.asanyarray(label)) for label in
+                                    self.test_batches_encoded] if detection else self.one_hot_encode(
+                    np.asanyarray(self.test_batches_encoded))
 
     def next_batch(self, batch_size):
         x = self.training_images[self.i:self.i + batch_size].reshape(batch_size, CURR_HEIGHT, CURR_WIDTH, CURR_CHANNELS)

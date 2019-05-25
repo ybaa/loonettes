@@ -13,19 +13,6 @@ class StereoImagesConverter:
 
     def create_disparity_map(self, save=False, show=True):
 
-        # left_matcher = cv2.StereoSGBM_create(minDisparity=0,
-        #                                   numDisparities=32,
-        #                                   blockSize=11,
-        #                                   P1=600,
-        #                                   P2=2400,
-        #                                   disp12MaxDiff=20,
-        #                                   preFilterCap=16,
-        #                                   uniquenessRatio=1,
-        #                                   speckleRange=20,
-        #                                   speckleWindowSize=100)
-
-
-
         window_size = 3  # wsize default 3; 5; 7 for SGBM reduced size image; 15 for SGBM full size image (1300px and above); 5 Works nicely
 
         left_matcher = cv2.StereoSGBM_create(
@@ -57,6 +44,7 @@ class StereoImagesConverter:
         disp_r = right_matcher.compute(self.frame_right, self.frame_left)
         disp_l = np.int16(disp_l)
         disp_r = np.int16(disp_r)
+
         filtered_img = wls_filter.filter(disp_l, self.frame_left, None, disp_r)  # important to put "imgL" here!!!
 
         filtered_img = cv2.normalize(src=filtered_img, dst=filtered_img, beta=0, alpha=255, norm_type=cv2.NORM_MINMAX)

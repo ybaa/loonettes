@@ -22,7 +22,7 @@ class Camera:
             ret, frame = capture.read()
             frame = self.rectify_img(frame) if rectify else frame
 
-            # Display the resulting frame
+            # Display the resulting frameq
             cv2.imshow('frame', frame)
 
             if cv2.waitKey(25) & 0xFF == ord('s'):

@@ -7,7 +7,8 @@ from tensorflow.python import debug as tf_debug
 import numpy as np
 from src.constants import LABELS_AMOUNT, CURR_CHANNELS, CURR_HEIGHT, CURR_WIDTH
 import cv2
-
+import time
+import csv
 
 class CNNMyDataset(CNNBase):
 
@@ -22,11 +23,14 @@ class CNNMyDataset(CNNBase):
 
         self.y_pred, self.train_step = self.create_layers(self.x, self.y_true, self.hold_prob, channels)
 
-    def run_learning_session(self, restore=False, save=False):
+    def run_learning_session(self, restore=False, save=False, save_csv=False):
 
         my_dataset_helper = self.load_and_prepare_set(reshape_test_images=False)
 
-        iter_number = 201
+        iter_number = 100001
+        batch_size = 10
+
+        data_to_csv = []
 
         with tf.Session() as sess:
 
@@ -38,12 +42,12 @@ class CNNMyDataset(CNNBase):
             # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
             for i in range(iter_number):
-                batch = my_dataset_helper.next_batch(20)
+                batch = my_dataset_helper.next_batch(batch_size)
                 sess.run(self.train_step, feed_dict={self.x: batch[0],
                                                      self.y_true: batch[1],
                                                      self.hold_prob: 0.5})
 
-                if i % 100 == 0:
+                if i % 10 == 0:
                     print('Currently on step ' + str(i))
                     print('Accuracy is:')
                     # Test model
@@ -52,19 +56,31 @@ class CNNMyDataset(CNNBase):
 
                     acc = tf.reduce_mean(tf.cast(matches, tf.float32))
 
-                    print(sess.run(acc, feed_dict={self.x: my_dataset_helper.test_images,
-                                                   self.y_true: my_dataset_helper.test_labels,
-                                                   self.hold_prob: 1.0}))
+                    start = time.time()
+                    acc_val = sess.run(acc, feed_dict={self.x: my_dataset_helper.test_images,
+                                                       self.y_true: my_dataset_helper.test_labels,
+                                                       self.hold_prob: 1.0})
+                    end = time.time()
+                    classification_time = (end - start) / len(my_dataset_helper.test_images)
+                    data_to_csv.append([i, CURR_CHANNELS, 0, acc_val, classification_time])
+                    print(acc_val)
                     print('\n')
 
                 if i == iter_number - 1 and save:
                     self.save_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
 
+        if save_csv:
+            with open('../reports/classification_eval_' + str(CURR_CHANNELS) + 'ch_b' + str(batch_size) + '.csv', mode='w') as csv_file:
+                writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                for row in data_to_csv:
+                    writer.writerow(row)
+
+
     def load_and_prepare_set(self, reshape_test_images=False, for_classification=True):
 
         my_dataset_loader = MyDatasetLoader()
         # my_dataset_loader.pickle_classification_data()
-        my_dataset_loader.pickle_detection_data()
+        # my_dataset_loader.pickle_detection_data()
 
         if for_classification:
             training_batch, test_batch, batch_meta = my_dataset_loader.load_dataset_for_classification()
@@ -102,49 +118,49 @@ class CNNMyDataset(CNNBase):
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_true, logits=y_pred))
         return cross_entropy
 
-    def create_optimizer(self, loss_function):
+    def  create_optimizer(self, loss_function):
         optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
         train_step = optimizer.minimize(loss_function)
         return train_step
 
-    def predict_single_image(self, img):
-        with tf.Session() as sess:
-            # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
+    def predict_single_image(self, img, sess):
+        # with tf.Session() as sess:
+        # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
-            self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
+        self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
 
-            # cv2.imshow('a', img)
-            # cv2.waitKey()
-            # cv2.destroyAllWindows()
+        # cv2.imshow('a', img)
+        # cv2.waitKey()
+        # cv2.destroyAllWindows()
 
-            img_reshaped = np.reshape(img, (1, CURR_HEIGHT, CURR_WIDTH, CURR_CHANNELS))
+        img_reshaped = np.reshape(img, (1, CURR_HEIGHT, CURR_WIDTH, CURR_CHANNELS))
 
-            # output from nn
-            pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
-                                                            self.hold_prob: 1.0})
-
-            # most probable one
-            pred_max_index = tf.argmax(self.y_pred, 1)
-
-            # index / class
-            index = sess.run(pred_max_index, feed_dict={self.x: img_reshaped,
+        # output from nn
+        pred_one_hot = sess.run(self.y_pred, feed_dict={self.x: img_reshaped,
                                                         self.hold_prob: 1.0})
 
-            # probability
-            prob = sess.run(tf.nn.softmax(logits=pred_one_hot))
+        # most probable one
+        pred_max_index = tf.argmax(self.y_pred, 1)
 
-            pred_val_nn_output_value = pred_one_hot[0][index[0]]    # pure output from nn
-            prob_val = prob[0][index[0]]
+        # index / class
+        index = sess.run(pred_max_index, feed_dict={self.x: img_reshaped,
+                                                    self.hold_prob: 1.0})
 
-            # print(index)
-            # print(pred_val_nn_output_value)
-            # print(pred_one_hot[0])
-            # print(prob)
-            # print(prob_val)
-            # print('-----------')
+        # probability
+        prob = sess.run(tf.nn.softmax(logits=pred_one_hot))
 
-            # if pred_val_nn_output_value < 3:
-            if prob_val < 0.90:
-                return None
+        pred_val_nn_output_value = pred_one_hot[0][index[0]]    # pure output from nn
+        prob_val = prob[0][index[0]]
 
-            return index
+        # print(index)
+        # print(pred_val_nn_output_value)
+        # print(pred_one_hot[0])
+        # print(prob)
+        # print(prob_val)
+        # print('-----------')
+
+        # if pred_val_nn_output_value < 3:
+        if prob_val < 0.90:
+            return None
+
+        return index

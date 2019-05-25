@@ -123,3 +123,6 @@ venv.bak/
 /models/cifar100Convo*
 /models/myConvo*
 
+# wav
+/src/*.wav
+
