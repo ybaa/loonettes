@@ -4,8 +4,9 @@ from src.models.cnnMyDataset import CNNMyDataset
 from src.models.divisionDetector import DivisionDetector
 from src.features.myDatasetHelper import MyDatasetHelper
 from collections import Counter
-from src.statics.positionEnum import Positions
+from src.statics.positionEnum import PositionsH, PositionV
 from src.visualization.speaker import Speaker
+from src.constants import CURR_CHANNELS
 import tensorflow as tf
 import numpy as np
 
@@ -21,6 +22,7 @@ class DeviceManager:
     def run(self):
 
         with tf.Session() as sess:
+            self.cnn.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
 
             while True:
                 single_img_divided_rescaled = self.__get_image()
@@ -30,10 +32,10 @@ class DeviceManager:
 
                 if len(single_img_predictions) > 0:
 
-                    label, position = self.__get_class_and_position(single_img_predictions)
+                    label, position_h, position_v = self.__get_class_and_position(single_img_predictions)
 
                     # say output
-                    self.speaker.say_recognition(label, position)
+                    self.speaker.say_recognition(label, position_h, position_v)
 
 
 
@@ -79,15 +81,26 @@ class DeviceManager:
         positions = [p[2] for p in single_img_predictions if p[0] == most_common]
 
         # todo: find a better way of positioning
-        positions_distribution = [0, 0, 0]
+        positions_distribution_h = [0, 0, 0]
         for p in positions:
             if p in [0, 6, 8, 9, 11, 13, 15, 17, 19]:
-                positions_distribution[Positions.MIDDLE.value] += 1
+                positions_distribution_h[PositionsH.MIDDLE.value] += 1
             elif p in [1, 3, 5, 7, 14, 16]:
-                positions_distribution[Positions.LEFT.value] += 1
+                positions_distribution_h[PositionsH.LEFT.value] += 1
             else:
-                positions_distribution[Positions.RIGHT.value] += 1
+                positions_distribution_h[PositionsH.RIGHT.value] += 1
 
-        final_position = positions_distribution.index(max(positions_distribution))
+        final_position_h = positions_distribution_h.index(max(positions_distribution_h))
 
-        return most_common, final_position
+        positions_distribution_v = [0, 0, 0]
+        for p in positions:
+            if p in [1, 2, 5, 6, 9, 10]:
+                positions_distribution_v[PositionV.UP.value] += 1
+            elif p in [3, 4, 15, 16, 19, 20]:
+                positions_distribution_v[PositionV.DOWN.value] += 1
+            else:
+                positions_distribution_v[PositionV.NORMAL.value] += 1
+
+        final_position_v = positions_distribution_v.index(max(positions_distribution_v))
+
+        return most_common, final_position_h, final_position_v

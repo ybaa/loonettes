@@ -179,5 +179,5 @@ class CNNMyDatasetMultiLabel(CNNBase):
                 if prob_val > recognition_prob:
                     recognition = i
 
-        return recognition
+        return recognition, prob_val
 

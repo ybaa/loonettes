@@ -127,7 +127,7 @@ class CNNMyDataset(CNNBase):
         # with tf.Session() as sess:
         # sess = tf_debug.TensorBoardDebugWrapperSession(sess, "ybaa-pc:7000")
 
-        self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
+        # self.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
 
         # cv2.imshow('a', img)
         # cv2.waitKey()
@@ -161,6 +161,6 @@ class CNNMyDataset(CNNBase):
 
         # if pred_val_nn_output_value < 3:
         if prob_val < 0.90:
-            return None
+            return None, None
 
         return index, prob_val

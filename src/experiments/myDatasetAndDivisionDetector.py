@@ -24,6 +24,7 @@ class MyDatasetAndDivisionDetectorManager:
         data_to_csv = []
 
         with tf.Session() as sess:
+            my_cnn.restore_model(sess, '../models/myConvo/' + str(CURR_CHANNELS) + 'ch/model.ckpt')
             for test_image, test_labels in zip(my_dataset_helper.test_images, my_dataset_helper.test_batches_encoded):
                 division_detector.divided_image = []
                 division_detector.divided_image.append(test_image)
@@ -33,6 +34,7 @@ class MyDatasetAndDivisionDetectorManager:
                 single_img_predictions = []
 
                 start = time.time()
+
                 for part_of_image in single_img_divided_rescaled:
                     part_img_pred_val, prob_val = my_cnn.predict_single_image(part_of_image, sess)
 
@@ -41,33 +43,35 @@ class MyDatasetAndDivisionDetectorManager:
 
                 end = time.time()
 
-                recognized_objects_on_single_photo = 0
-                for test_label in test_labels:
-                    if test_label in single_img_predictions:
-                        recognized_objects_on_single_photo += 1
+                if len(single_img_predictions) > 0:
 
-                if recognized_objects_on_single_photo == len(test_labels):
-                    correct_answers += 1
+                    recognized_objects_on_single_photo = 0
+                    for test_label in test_labels:
+                        if test_label in single_img_predictions:
+                            recognized_objects_on_single_photo += 1
 
-                if recognized_objects_on_single_photo > 0:
-                    correct_min_one_object_recognized += 1
+                    if recognized_objects_on_single_photo == len(test_labels):
+                        correct_answers += 1
 
-                data_to_csv.append([tested_images,
-                                    correct_answers / tested_images,
-                                    correct_min_one_object_recognized / tested_images,
-                                    end - start])
+                    if recognized_objects_on_single_photo > 0:
+                        correct_min_one_object_recognized += 1
 
-                print('current acc for all objects: ' + str(correct_answers / tested_images) + ' on step ' + str(tested_images))
-                print('current acc for min 1 object: ' + str(correct_min_one_object_recognized / tested_images) + ' on step ' + str(tested_images))
-                print('time of prediciton: ' + str(end-start))
-                tested_images += 1
-                print('----------------------------------------')
+                    data_to_csv.append([tested_images,
+                                        correct_answers / tested_images,
+                                        correct_min_one_object_recognized / tested_images,
+                                        end - start])
+
+                    print('current acc for all objects: ' + str(correct_answers / tested_images) + ' on step ' + str(tested_images))
+                    print('current acc for min 1 object: ' + str(correct_min_one_object_recognized / tested_images) + ' on step ' + str(tested_images))
+                    print('time of prediciton: ' + str(end-start))
+                    tested_images += 1
+                    print('----------------------------------------')
 
         print('final acc for all objects: ' + str(correct_answers / len(my_dataset_helper.test_batches_encoded)))
         print('final acc for min 1 object: ' + str(correct_min_one_object_recognized / len(my_dataset_helper.test_batches_encoded)))
 
         if save_csv:
-            with open('../reports/detection_eval_' + str(CURR_CHANNELS) + 'ch.csv', mode='w') as csv_file:
+            with open('../reports/detection_eval_' + str(CURR_CHANNELS) + 'ch2.csv', mode='w') as csv_file:
                 writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 for row in data_to_csv:
                     writer.writerow(row)

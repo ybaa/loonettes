@@ -30,6 +30,11 @@
 │   │
 │   ├── models         <- Scripts to train models and then use trained models to make
 │   │                     predictions
+│   │
+│   ├── statics        <- Static helpers, enums etc.
+│   │
+│   ├── visualization  <- Scripts to generate final outputs
+│   │ 
 │   ├── __init__.py    <- Makes src a Python module
 |   |
 │   ├── main.py        <- Makes src a Python module

@@ -5,16 +5,14 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # turn off warnings
 from src.visualization.deviceManager import DeviceManager
 
-
 dm = DeviceManager()
 dm.run()
-
 
 # # 1 CNN
 # # detection test
 # exp1 = MyDatasetAndDivisionDetectorManager()
 # exp1.test_detection(save_csv=False)
-#
+
 # # learning sess
 # cnn = CNNMyDataset()
 # cnn.run_learning_session(save=False, restore=False, save_csv=False)
